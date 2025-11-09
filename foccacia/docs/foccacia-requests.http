@@ -1,0 +1,249 @@
+### User 2 (testing app)
+@tokenUser2 = 273965aa-7271-4466-9887-c881a45300d4
+
+### Insert a Group
+POST http://localhost:8000/groups HTTP/2
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+    "name": "PT Group",
+    "description": "Best Portuguese League players",
+    "competition": {
+        "code": "PT",
+        "name": "Liga Portugal"
+    },
+    "year": 2024
+}
+
+### Delete group pt group
+DELETE http://localhost:8000/groups/PT%20Group HTTP/2
+Authorization: Bearer {{tokenUser2}}
+
+### Insert a Group
+
+POST http://localhost:8000/groups HTTP/2
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+    "name": "PL Group",
+    "description": "Best Premier League players",
+    "competition": {
+        "code": "PL",
+        "name": "Premier League"
+    },
+    "year": 2024
+}
+
+### Get all groups
+
+GET http://localhost:8000/groups HTTP/2
+Authorization: Bearer {{tokenUser2}}
+
+### Get group PT_GROUP
+
+GET http://localhost:8000/groups/PT%20Group HTTP/2
+Authorization: Bearer {{tokenUser2}}
+
+### Update group PT_GROUP
+PUT http://localhost:8000/groups/PT%20Group HTTP/2
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+    "name": "group1",
+    "description": "rename group PT_GROUP to group1"
+}
+
+### Get group group1
+
+GET http://localhost:8000/groups/group1 HTTP/2
+Authorization: Bearer {{tokenUser2}}
+
+### Delete group group1
+
+DELETE http://localhost:8000/groups/group1 HTTP/2
+Authorization: Bearer {{tokenUser2}}
+
+### Add player to group
+POST http://localhost:8000/groups/PL%20GROUP/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "123",
+  "playerName": "Guilherme",
+  "teamCode": "SLB",
+  "teamName": "Benfica"
+}
+
+### Get group PL_GROUP
+
+GET http://localhost:8000/groups/PL%20GROUP HTTP/2
+Authorization: Bearer {{tokenUser2}}
+
+### Remove player from group
+DELETE http://localhost:8000/groups/PL%20Group/players/123
+Authorization: Bearer {{tokenUser2}}
+
+### Get group PL_GROUP
+
+GET http://localhost:8000/groups/PL%20Group HTTP/2
+Authorization: Bearer {{tokenUser2}}
+
+### ADD 12 PLAYERS TO A GROUP AND SEE WHAT HAPPENS
+### 1/12 Add Player
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "1",
+  "playerName": "Alisson Becker",
+  "teamCode": "LIV",
+  "teamName": "Liverpool"
+}
+
+### 2/12 Add Player
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "2",
+  "playerName": "Rúben Dias",
+  "teamCode": "MCI",
+  "teamName": "Manchester City"
+}
+
+### 3/12 Add Player
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "3",
+  "playerName": "Virgil van Dijk",
+  "teamCode": "LIV",
+  "teamName": "Liverpool"
+}
+
+### 4/12 Add Player
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "4",
+  "playerName": "Trent Alexander-Arnold",
+  "teamCode": "LIV",
+  "teamName": "Liverpool"
+}
+
+### 5/12 Add Player
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "5",
+  "playerName": "Andy Robertson",
+  "teamCode": "LIV",
+  "teamName": "Liverpool"
+}
+
+### 6/12 Add Player
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "6",
+  "playerName": "Declan Rice",
+  "teamCode": "ARS",
+  "teamName": "Arsenal"
+}
+
+### 7/12 Add Player
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "7",
+  "playerName": "Kevin De Bruyne",
+  "teamCode": "MCI",
+  "teamName": "Manchester City"
+}
+
+### 8/12 Add Player
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "8",
+  "playerName": "Bruno Fernandes",
+  "teamCode": "MUN",
+  "teamName": "Manchester United"
+}
+
+### 9/12 Add Player
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "9",
+  "playerName": "Mohamed Salah",
+  "teamCode": "LIV",
+  "teamName": "Liverpool"
+}
+
+### 10/12 Add Player
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "10",
+  "playerName": "Erling Haaland",
+  "teamCode": "MCI",
+  "teamName": "Manchester City"
+}
+
+### 11/12 Add Player
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "11",
+  "playerName": "Bukayo Saka",
+  "teamCode": "ARS",
+  "teamName": "Arsenal"
+}
+
+### 12/12 Add Player
+### ERRO AO ADICIONAR
+POST http://localhost:8000/groups/PL%20Group/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+  "playerId": "12",
+  "playerName": "Harry Kane",
+  "teamCode": "TOT",
+  "teamName": "Tottenham"
+}
+
+### Get competitions
+
+GET http://localhost:8000/competitions HTTP/2
+Authorization: Bearer {{tokenUser2}}
+
+### Get teams
+
+GET http://localhost:8000/competitions/EPL/season/2024/teams HTTP/2
+Authorization: Bearer {{tokenUser2}}

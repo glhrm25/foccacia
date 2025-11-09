@@ -1,0 +1,16 @@
+### Insert a new user
+# Sending request for the second time should return error 400.
+POST http://localhost:8000/users
+Content-Type: application/json
+
+{
+    "username": "mpereira"
+}
+
+### Error 400: Invalid body for inserting a new user
+POST http://localhost:8000/users
+Content-Type: application/json
+
+{
+    "name": "foliveira"
+}

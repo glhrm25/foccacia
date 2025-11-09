@@ -1,0 +1,606 @@
+openapi: 3.0.1
+info:
+  title: Foccacia API
+  description: This is a simple API for searching football information.
+  contact:
+    email: A52673@alunos.isel.pt
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.2.0
+servers:
+  - description: Localhost server for testing API
+    url: http://localhost:8000
+security: # Bearer Authorization is global
+  - bearerAuth: []
+tags:
+  - name: Competitions
+  - name: Teams
+  - name: Groups
+  - name: Players
+  - name: Users
+paths:
+  # USERS
+  /users:
+    description: The resource that contains all users
+    post:
+      tags:
+        - Users
+      summary: adds a user
+      description: Adds a user to the system
+      operationId: addUser
+      security: []  # Remove the need for authorization
+      requestBody:
+        description: User to add
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUser"
+        required: true
+      responses:
+        201:
+          description: user created
+          content:
+            application/json:
+              schema:
+                required:
+                  - token
+                type: object
+                properties:
+                  token:
+                    type: string
+                    format: uuid
+        400: 
+          $ref: "#/components/responses/400InvalidBody"
+# COMPETITIONS
+  /competitions:
+    description: The resource that contains all available competitions
+    get:
+      tags:
+        - Competitions
+      summary: get all competitions
+      description: Get all available competitions.
+      operationId: getAllCompetitions
+      responses:
+        200:
+          description: In case of success, returns a list of competitions.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Competitions"
+        400:
+          $ref: "#/components/responses/400MissingParameter"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+# TEAMS
+  /competitions/{competitionCode}/seasons/{season}/teams:
+    description: The resource that contains all teams from a specific competition and season.
+    get:
+      tags:
+        - Teams
+      summary: get teams from competition
+      description: Get all teams from a competition from a season.
+      operationId: getAllTeamsFromCompetition
+      parameters:
+      - name: competitionCode
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Code of the competition (e.g., UCL, EPL)
+      - name: season
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Season of the competition (e.g., 2023, 2023/24)
+      responses:
+        200:
+          description: In case of success, returns a list of Teams.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Teams"
+        400:
+          $ref: "#/components/responses/400MissingParameter"
+        401:
+          $ref: "#/components/responses/401Unauthorized"  
+# GROUPS
+  /groups:
+    description: The resource that contains all the user's favorite BEST XI groups.
+    # GET GROUPS
+    get:
+      tags:
+        - Groups
+      summary: get user's groups
+      description: Get all the user's favorite BEST XI groups.
+      operationId: getAllGroups
+      responses:
+        200:
+          description: In case of success, returns a list of groups.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Groups"
+        400:
+          $ref: "#/components/responses/400MissingParameter"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+    # CREATE A GROUP
+    post:
+      tags:
+        - Groups
+      summary: adds a new Group
+      description: Adds a group to the system
+      operationId: addGroup
+      requestBody:
+        description: Group to add
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewGroup"
+      responses:
+        201:
+          description: Group created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewGroupCreated"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        400:
+          $ref: "#/components/responses/400InvalidBody"
+# GROUP FROM NAME:
+  /groups/{groupName}:
+    description: The resource that contains a specified group.
+    # GET GROUP
+    get:
+      tags:
+        - Groups
+      summary: get the specified user's group
+      description: Get the user's specified BEST XI group by it's name.
+      operationId: getGroupName
+      parameters:
+        - name: groupName
+          in: path
+          description: Name of group to be found
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: In case of success, returns a group.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        400:
+          $ref: "#/components/responses/400MissingParameter"
+        401:
+          $ref: "#/components/responses/401Unauthorized"    
+    # UPDATE GROUP
+    put:
+      tags:
+        - Groups
+      summary: update a group
+      description: Updates a group's name and description in the system
+      operationId: updateGroup
+      parameters:
+        - name: groupName
+          in: path
+          description: Name of the group to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Group to replace
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateGroup"
+      responses:
+        201:
+          description: group updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        400:
+          $ref: "#/components/responses/400BadRequest"
+        404:
+          $ref: "#/components/responses/404NotFound"
+    # DELETE GROUP
+    delete:
+      tags:
+        - Groups
+      summary: Delete a group by name
+      description: Delete a group by name
+      operationId: deleteGroup
+      parameters:
+        - name: groupName
+          in: path
+          description: Name of the group to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Group successfully deleted"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Group deleted successfully
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        400:
+          $ref: "#/components/responses/400InvalidParameter"
+  /groups/{groupName}/players:
+    # ADD A PLAYER TO GROUP
+    post:
+      tags:
+        - Players
+      summary: adds a new player to group
+      description: Adds a new player to the system
+      operationId: addPlayer
+      requestBody:
+        description: Player to add
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Group_Player"
+      responses:
+        201:
+          description: Player added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupPlayerAdd"
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        400:
+          $ref: "#/components/responses/400InvalidBody"
+    # DELETE A PLAYER FROM A GROUP
+  /groups/{groupName}/players/{playerId}:
+    delete:
+      tags:
+        - Players
+      summary: Delete a player from a group
+      description: Delete a player from a group
+      operationId: deletePlayer
+      parameters:
+        - name: groupName
+          in: path
+          description: Name of the group where the player is
+          required: true
+          schema:
+            type: string
+        - name: playerId
+          in: path
+          description: Id of the player to be removed
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Player successfully removed"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Player removed successfully
+        401:
+          $ref: "#/components/responses/401Unauthorized"
+        404:
+          $ref: "#/components/responses/404NotFound"
+        400:
+          $ref: "#/components/responses/400InvalidParameter"
+# COMPONENTS:          
+components:
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+  schemas:
+# COMPETITIONS:
+    Competitions: # Objeto do tipo {competitions: <Array de competições>}
+      type: object
+      required:
+        - competitions
+      properties:
+        competitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Competition"
+    Competition:
+      required:
+        - id
+        - name
+      type: object
+      properties:
+        id:
+          type: string
+          example: EPL
+        name:
+          type: string
+          example: English Premier League.
+# TEAMS:          
+    Teams:  # Objeto do tipo {teams: <Array de teams>}
+      type: object
+      required:
+        - teams
+      properties:
+        teams:
+          type: array
+          items:
+            $ref: "#/components/schemas/Team"
+    Team:  # Objeto do tipo {name: <Nome da Equipa>, country: <Pais da Equipa>, Players: <Objeto }
+      type: object
+      required:
+        - name
+        - country
+        - players
+      properties:
+        name:
+          type: string
+          example: SL Benfica
+        country:
+          type: string
+          example: Portugal
+        players: 
+          type: array
+          items:
+            $ref: "#/components/schemas/Player"
+    Player: 
+      required:
+        - name
+        - position
+      type: object
+      properties:
+        name:
+          type: string
+          example: Guilherme
+        position:
+          type: string
+          example: PL
+# GROUPS:
+    Groups:  # Objeto do tipo {groups: <Array de groups>}
+      type: object
+      required:
+        - groups
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/Group"
+    Group:
+    # Objeto do tipo {name: <Nome do Grupo>, description: <Descrição do grupo>, competition: <Competição>, year: <Ano>, players: <Array de jogadores}    
+      type: object
+      required:
+        - name
+        - description
+        - competition
+        - year
+      properties:
+        name:
+          type: string
+          example: PL Group
+        description:
+          type: string
+          example: Best premier league players
+        competition:
+          $ref: "#/components/schemas/Competition"
+        year:
+          type: integer
+          example: 2024
+  # Group_Player -> Player with more specifications.
+    Group_Player:
+      type: object
+      required:
+        - playerId
+        - playerName
+        - teamId
+        - teamName
+        - position
+        - nationality
+        - age
+      properties:
+        playerId:
+          type: string
+        playerName:
+          type: string
+        teamId:
+          type: string
+        teamName:
+          type: string
+        position:
+          type: string
+        nationality:
+          type: string
+        age:
+          type: number
+
+    GroupPlayerAdd:
+      type: object
+      required:
+        - playerId
+        - playerName
+        - teamCode
+        - teamName
+      properties:
+        playerId:
+          type: string
+        playerName:
+          type: string
+        teamCode:
+          type: string
+        teamName:
+          type: string
+
+    # New group to replace (update) another group.      
+    UpdateGroup:  
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          example: PL Group
+        description:
+          type: string
+          example: Best premier league players
+    # New group to replace (update) another group.      
+    NewGroup:  
+      type: object
+      required:
+        - name
+        - description
+        - competition
+        - year
+      properties:
+        name:
+          type: string
+          example: PL Group
+        description:
+          type: string
+          example: Best premier league players
+        competition:
+          $ref: "#/components/schemas/Competition"
+        year:
+          type: integer
+          example: 2024
+
+
+# MESSAGES:
+    NewGroupCreated:
+      required:
+        - status
+        - group
+      type: object
+      properties:
+        status:
+          type: string
+          example: Group with name Group1 created with success
+        group:
+          $ref: "#/components/schemas/Group"
+    NewUser:
+      type: object
+      required:
+        - userName
+      properties:
+        userName:
+          type: string
+          example: asilva
+          
+    MissingParameter:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 1
+        error:
+          type: string
+          example: "Missing required parameter"
+    InvalidParameter:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 2
+        error:
+          type: string
+          example: "Invalid parameter"
+    InvalidBody:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 3
+        error:
+          type: string
+          example: "Invalid body content"
+    InvalidQuery:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 4
+        error:
+          type: string
+          example: "Invalid query string"
+    NotFound:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 5
+        error:
+          type: string
+          example: "Task with id 1 not found"
+    MissingToken:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 6
+        error:
+          type: string
+          example: "Missing token."
+  responses:
+    401Unauthorized:
+      description: "Access to the resource is unauthorized."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MissingToken"
+    404NotFound:
+      description: "Resource not found"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/NotFound"
+    400BadRequest:
+      description: "Missing parameter"
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: "#/components/schemas/InvalidParameter"
+              - $ref: "#/components/schemas/InvalidBody"
+              - $ref: "#/components/schemas/InvalidQuery"
+              - $ref: "#/components/schemas/MissingParameter"
+    400InvalidBody:
+      description: "Invalid body content"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/InvalidBody"
+    400InvalidParameter:
+      description: "Invalid parameter"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/InvalidParameter"
+    400InvalidQuery:
+      description: "Invalid query string"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/InvalidQuery"
+    400MissingParameter:
+      description: "Missing parameter"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MissingParameter"
