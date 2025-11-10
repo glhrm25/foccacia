@@ -8,8 +8,8 @@ export default function init() {
     const groups = {};
   
     return {
-      getCompetitions,
-      getTeams,
+      //getCompetitions,
+      //getTeams,
       getGroupsForUser,
       getGroup,
       addGroup,
@@ -18,7 +18,7 @@ export default function init() {
       addPlayerToGroup,
       removePlayerFromGroup
     };
-    
+    /*
     // TO-DO:
     // MOVE THIS FUNCTIONS TO FAPI-TEAMS-DATA.JS
     async function getObjApi(options){
@@ -39,7 +39,7 @@ export default function init() {
     async function getTeams(competitionCode, season){
         return await getObjApi(`competitions/${competitionCode}/teams?season=${season}`)
     }
-  
+  */
     function getGroupsForUser(userId) {
       const g = groups[userId]
       return g ? Object.values(g) : {}

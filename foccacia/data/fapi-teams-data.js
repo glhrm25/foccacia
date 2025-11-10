@@ -21,11 +21,11 @@ export default function init(){
             processError(error)
         }
     }
-
+    
     async function getCompetitions(){
         return await getObjApi("competitions/")
     }
-
+  
     async function getTeams(competitionCode, season){
         return await getObjApi(`competitions/${competitionCode}/teams?season=${season}`)
     }

@@ -1,4 +1,7 @@
 import { errors } from '../commons/internal-errors.js';
+import fapiTeamsData from '../data/fapi-teams-data.js'
+
+const fapiData = fapiTeamsData()
 
 export default function init(groupsData, usersServices) {
 
@@ -120,13 +123,15 @@ export default function init(groupsData, usersServices) {
 
     // Output: All the available competitions.
     async function getCompetitions() {
-        return await groupsData.getCompetitions()
+        //return await groupsData.getCompetitions()
+        return await fapiData.getCompetitions()
     }
 
     // Input: a competitionCode (String) and a season(string)
     // Output: All the teams that participated on the specified competition.
     async function getTeams(competitionCode, season) {
-        return await groupsData.getTeams(competitionCode, season);
+        // return await groupsData.getTeams(competitionCode, season);
+        return await fapiData.getTeams(competitionCode, season)
     }
 
     // Auxiliary function: gets userId by it's token and returns a object with the id and the group with groupName (Or undefined if group does not exist).
