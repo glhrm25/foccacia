@@ -24,36 +24,50 @@ export default function init(groupsServices) {
     };
 
     function processRequest(operation){
-      return function (req, res){
+      return async function (req, res){
         const token = getToken(req);
         // Handling missing token
-        if (! token){
+        if (!token){
           const error = errorToHttp(errors.MISSING_TOKEN());
           res.status(error.status);
           res.json(error.body);
           return ;
         }
         req.userToken = token;
+        /*
         const internalError = operation(req, res);
         // Handling services errors
         if (internalError){
           const error = errorToHttp(internalError);
           res.status(error.status);
           res.json(error.body);
+        }*/
+        try {
+          const internalError = await operation(req, res);
+
+          // Handling service errors (caso a função retorne erro)
+          if (internalError) {
+            const error = errorToHttp(internalError);
+            return res.status(error.status).json(error.body);
+          }
+        } 
+        catch (err) {
+          console.error("Unexpected error:", err);
+          return res.status(500).json({ message: "Internal Server Error" });
         }
-      };
+      }
     }
 
-    function internal_getCompetitions(req, res){
-      const output = groupsServices.getCompetitions(req.userToken);
+    async function internal_getCompetitions(req, res){
+      const output = await groupsServices.getCompetitions(req.userToken);
       if (output.internalError) return output;
 
       // Success case
       res.json(output);
     }
 
-    function internal_getTeams(req, res){
-      const output = groupsServices.getTeams(req.params.competitionCode, req.params.season, req.userToken);
+    async function internal_getTeams(req, res){
+      const output = await groupsServices.getTeams(req.params.competitionCode, req.params.season, req.userToken);
       if (output.internalError) return output;
 
       // Success case
@@ -69,7 +83,7 @@ export default function init(groupsServices) {
     }
 
     function internal_getGroup(req, res){
-      const output = groupsServices.getGroup(req.userToken, req.params.groupName.toUpperCase());
+      const output = groupsServices.getGroup(req.userToken, req.params.groupName);
       if (output.internalError) return output;
 
       // Success case
@@ -90,7 +104,7 @@ export default function init(groupsServices) {
     }
 
     function internal_deleteGroup(req, res){
-      const groupName = req.params.groupName.toUpperCase()
+      const groupName = req.params.groupName
       let output = groupsServices.deleteGroup(req.userToken, groupName);
 
       // Success case
@@ -101,7 +115,7 @@ export default function init(groupsServices) {
     }
 
     function internal_updateGroup(req, res){
-      const groupName = req.params.groupName.toUpperCase()
+      const groupName = req.params.groupName
       let output = groupsServices.updateGroup(req.userToken, groupName, req.body);
       if (output.internalError) return output;
 
@@ -114,7 +128,7 @@ export default function init(groupsServices) {
     }
 
     function internal_addPlayerToGroup(req, res){
-      const groupName = req.params.groupName.toUpperCase()
+      const groupName = req.params.groupName
       let output = groupsServices.addPlayerToGroup(req.userToken, groupName, req.body);
       if (output.internalError) return output;
 
@@ -128,7 +142,7 @@ export default function init(groupsServices) {
     }  
 
     function internal_removePlayerFromGroup(req, res){
-      const groupName = req.params.groupName.toUpperCase()
+      const groupName = req.params.groupName
       const playerId = req.params.playerId
       let output = groupsServices.removePlayerFromGroup(req.userToken, groupName, playerId);
       if (output.internalError) return output;

@@ -245,5 +245,5 @@ Authorization: Bearer {{tokenUser2}}
 
 ### Get teams
 
-GET http://localhost:8000/competitions/EPL/season/2024/teams HTTP/2
+GET http://localhost:8000/competitions/PPL/season/2023/teams HTTP/2
 Authorization: Bearer {{tokenUser2}}

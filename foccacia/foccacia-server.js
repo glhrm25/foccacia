@@ -13,19 +13,16 @@ import usersServicesInit from './services/users-services.js';
 import usersDataInit from './data/mock-users-data-mem.js';
 import groupsDataInit from './data/foccacia-data-mem.js';
 //import usersDataInit from './data/users-data-mem.js';
-//import footballDataInit from './data/fapi-teams-data.js'
 
 const PORT = 8000;  // Port number for the tests
 
 let groupsAPI;
 let usersAPI;
-//let fAPI;
 
 // Dependency Injection:
 try {
   const groupsData = groupsDataInit();
   const usersData = usersDataInit();
- // const footballData = footballDataInit()
 
   const usersServices = usersServicesInit(usersData);
   const groupsServices = groupsServicesInit(groupsData, usersServices);
