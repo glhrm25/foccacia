@@ -13,6 +13,7 @@ import usersServicesInit from './services/users-services.js';
 import usersDataInit from './data/mock-users-data-mem.js';
 import groupsDataInit from './data/foccacia-data-mem.js';
 //import usersDataInit from './data/users-data-mem.js';
+import fapiTeamsData from './data/fapi-teams-data.js';
 
 const PORT = 8000;  // Port number for the tests
 
@@ -23,9 +24,10 @@ let usersAPI;
 try {
   const groupsData = groupsDataInit();
   const usersData = usersDataInit();
+  const fapiData = fapiTeamsData()
 
   const usersServices = usersServicesInit(usersData);
-  const groupsServices = groupsServicesInit(groupsData, usersServices);
+  const groupsServices = groupsServicesInit(groupsData, fapiData, usersServices);
 
   groupsAPI = groupsApiInit(groupsServices);
   usersAPI = usersApiInit(usersServices);

@@ -1,9 +1,6 @@
 import { errors } from '../commons/internal-errors.js';
-import fapiTeamsData from '../data/fapi-teams-data.js'
 
-const fapiData = fapiTeamsData()
-
-export default function init(groupsData, usersServices) {
+export default function init(groupsData, footballData, usersServices) {
 
     // Verify the dependencies:
     if(! usersServices){
@@ -29,47 +26,63 @@ export default function init(groupsData, usersServices) {
     // Input: a query (object) (or an empty object {}) and a user token (String). -> ADICIONAR AS QUERYS ???
     // Output: an array of groups or an internal error object.
     function getAllGroups(userToken){
-        const userId = usersServices.getUserId(userToken);
-        const groups = groupsData.getGroupsForUser(userId);
-    /*
-        const queryLen = Object.keys(query).length;
-        if (queryLen == 0){ // There is no query string
-        return groups;
-        }
-        if (queryLen == 1 && "search" in query){
-        const querySearch = query["search"];
-        const searchedTasks = tasksData.searchTasks(groups, querySearch);
-        return(searchedTasks);
-        }
-        else {
-        return errors.INVALID_QUERY();
-        }
+        const userId = usersServices.getUserId(userToken)
+        return userId.then(
+            id => {
+                return id ? groupsData.getGroupsForUser(id) : Promise.reject(errors.USER_NOT_FOUND())  
+            }
+        )
+        /*
+        return tasksPromise.then(tasks => {
+          const queryLen = Object.keys(query).length;
+          if (queryLen == 0) { // There is no query string
+            return tasks;
+          }
+          if (queryLen == 1 && "search" in query) {
+            const querySearch = query["search"];
+            const searchedTasks = tasksData.searchTasks(tasks, querySearch);
+            return(searchedTasks);
+          }
+          else {
+            return Promise.reject(errors.INVALID_QUERY());
+          }
+        });
         */
-        return groups
     }
 
     // Input: a new group object.
     // Output: a group or a internal error object.
     function addGroup(userToken, newGroup){
         if (!isValidGroup(newGroup))
-            return errors.INVALID_GROUP();
+            return errors.INVALID_GROUP()
 
-        const g = getIdAndGroup(userToken, newGroup.name)
-        if (g.group)
-            return errors.GROUP_ALREADY_EXISTS(newGroup.name);
-        
-        return groupsData.addGroup(g.userId, newGroup)
+        const userId = usersServices.getUserId(userToken);
+        return userId.then(id => {
+            if(!id) return Promise.reject(errors.USER_NOT_FOUND)
+            // CHECK IF GROUP ALREADY EXISTS
+            const groupPromise = groupsData.getGroup(id, newGroup.name)
+            return groupPromise.then(group => {
+                if (group) return Promise.reject(errors.GROUP_ALREADY_EXISTS)
+                return groupsData.addGroup(g.userId, newGroup)
+            })
+        })
     }
 
     // Input: a groupName (String) and a userToken (String).
     // Output: a group or a internal error object.
     function getGroup(userToken, groupName){
         if (typeof groupName !== "string" || groupName.trim() === "")
-            return errors.INVALID_PARAMETER(groupName);
-        
-        const g = checkGroup(userToken, groupName)
-        if (g.internalError) return g
-        return g.group
+            return errors.INVALID_PARAMETER(groupName)
+
+        const userId = usersServices.getUserId(userToken)
+        return userId.then(id => {
+            if (!id) return Promise.reject(errors.USER_NOT_FOUND)
+            const groupPromise = groupsData.getGroup(id, groupName)
+            return groupPromise.then(group => {
+                if (!group) return Promise.reject(errors.GROUP_NOT_FOUND)
+                return group
+            })
+        })
     }
 
     // Input: a groupName (String) and a userToken (String).
@@ -124,21 +137,25 @@ export default function init(groupsData, usersServices) {
     // Output: All the available competitions.
     async function getCompetitions() {
         //return await groupsData.getCompetitions()
-        return await fapiData.getCompetitions()
+        return await footballData.getCompetitions()
     }
 
     // Input: a competitionCode (String) and a season(string)
     // Output: All the teams that participated on the specified competition.
     async function getTeams(competitionCode, season) {
         // return await groupsData.getTeams(competitionCode, season);
-        return await fapiData.getTeams(competitionCode, season)
+        return await footballData.getTeams(competitionCode, season)
     }
 
     // Auxiliary function: gets userId by it's token and returns a object with the id and the group with groupName (Or undefined if group does not exist).
     function getIdAndGroup(userToken, groupName){
         const userId = usersServices.getUserId(userToken)
-        const group = groupsData.getGroup(userId, groupName.toUpperCase())
-        return {id: userId, group: group}
+        const group = userId.then(id => {
+            return groupsData.getGroup(id, groupName.toUpperCase())
+        })
+        return group.then(g => {
+            return {id: g.userId, group: g}
+        })
     }
 
     // Auxiliary function: Check if user has already created a group with groupName

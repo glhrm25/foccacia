@@ -1,4 +1,4 @@
-var requestOptions = {
+let requestOptions = {
     method: `GET`,
     headers: {'X-Auth-Token': process.env.key}
 }
@@ -29,9 +29,9 @@ export default function init(){
     async function getTeams(competitionCode, season){
         return await getObjApi(`competitions/${competitionCode}/teams?season=${season}`)
     }
-
-    function getPlayer(playerId){
-        
+    // TO-DO:
+    async function getPlayer(playerId){
+        return await getObjApi(``)
     }
 }
 

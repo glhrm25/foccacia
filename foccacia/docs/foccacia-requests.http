@@ -1,5 +1,5 @@
 ### User 2 (testing app)
-@tokenUser2 = 273965aa-7271-4466-9887-c881a45300d4
+@tokenUser2 = b0506867-77c3-4142-9437-1f627deebd67
 
 ### Insert a Group
 POST http://localhost:8000/groups HTTP/2

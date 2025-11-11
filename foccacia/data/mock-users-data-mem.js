@@ -39,10 +39,18 @@ export default function init(){
     return user;
   }
 
+  /*
   function getUserId(token){
     let user = USERS.find(user => user.token == token);
     if (user)
       return user.id;
+  }
+    */
+  function getUserId(token){
+    return new Promise((resolve, reject) => {
+      let user = USERS.find(user => user.token == token);
+      resolve(user?.id); // user id or undefined
+    });
   }
 
   function getUserIdByName(username){

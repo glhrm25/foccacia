@@ -2,6 +2,13 @@
 import { errorToHttp  } from "./errors-to-http-responses.js";
 import { errors } from "../../commons/internal-errors.js";
 
+// Input: the Response Object and the internal error object to be set.
+function setHttpError(res, internalError) {
+  const error = errorToHttp(internalError);
+  res.status(error.status);
+  res.json(error.body);
+}
+
 // FUNCTIONS (WEB API):
 
 export default function init(groupsServices) {
@@ -24,38 +31,19 @@ export default function init(groupsServices) {
     };
 
     function processRequest(operation){
-      return async function (req, res){
+      return function (req, res){
         const token = getToken(req);
         // Handling missing token
-        if (!token){
-          const error = errorToHttp(errors.MISSING_TOKEN());
-          res.status(error.status);
-          res.json(error.body);
-          return ;
+        if (! token){
+          return setHttpError(res, errors.MISSING_TOKEN());
         }
         req.userToken = token;
-        /*
-        const internalError = operation(req, res);
-        // Handling services errors
-        if (internalError){
-          const error = errorToHttp(internalError);
-          res.status(error.status);
-          res.json(error.body);
-        }*/
-        try {
-          const internalError = await operation(req, res);
-
-          // Handling service errors (caso a função retorne erro)
-          if (internalError) {
-            const error = errorToHttp(internalError);
-            return res.status(error.status).json(error.body);
-          }
-        } 
-        catch (err) {
-          console.error("Unexpected error:", err);
-          return res.status(500).json({ message: "Internal Server Error" });
-        }
-      }
+        // Call the operation:
+        operation(req, res).catch(internalError => {
+          // Handling services errors
+          return setHttpError(res, internalError);
+        });
+      };
     }
 
     async function internal_getCompetitions(req, res){
@@ -75,32 +63,30 @@ export default function init(groupsServices) {
     }
 
     function internal_getAllGroups(req, res){
-      const output = groupsServices.getAllGroups(req.userToken);
-      if (output.internalError) return output;
-
-      // Success case
-      res.json({groups : output});
+      return groupsServices.getAllGroups(req.userToken).then(
+        groups => {
+          res.json({groups: groups})
+        }
+      )
     }
 
     function internal_getGroup(req, res){
-      const output = groupsServices.getGroup(req.userToken, req.params.groupName);
-      if (output.internalError) return output;
-
-      // Success case
-      res.json({group: output});
+      return groupsServices.getGroup(req.userToken, req.params.groupName).then(
+        groups => {
+          res.json({groups: groups})
+        }
+      )
     }
 
     function internal_addGroup(req, res){
-      const output = groupsServices.addGroup(req.userToken, req.body);
-      if (output.internalError) return output;
-
-      // Success case
-      const group = output;
-      res.status(201);
-      res.json({
-        status: `Group ${group.name} was added!`,
-        group: group
-      });
+      return groupsServices.addGroup(req.userToken, req.body).then(
+        group => {
+          res.status(201);
+          res.json({
+            status: `Group ${group.name} was added!`,
+            group: group
+          });
+        })
     }
 
     function internal_deleteGroup(req, res){
