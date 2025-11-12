@@ -53,19 +53,19 @@ export default function init(groupsData, footballData, usersServices) {
     // Input: a new group object.
     // Output: a group or a internal error object.
     function addGroup(userToken, newGroup){
-        if (!isValidGroup(newGroup))
-            return errors.INVALID_GROUP()
-
+        if (!isValidGroup(newGroup)){
+            return Promise.reject(errors.INVALID_GROUP())
+        }
         const userId = usersServices.getUserId(userToken);
         return userId.then(id => {
             if(!id) {
-                return Promise.reject(errors.USER_NOT_FOUND)
+                return Promise.reject(errors.USER_NOT_FOUND())
             }
             // CHECK IF GROUP ALREADY EXISTS
             const groupPromise = groupsData.getGroup(id, newGroup.name)
             return groupPromise.then(group => {
                 if (group) {
-                    return Promise.reject(errors.GROUP_ALREADY_EXISTS)
+                    return Promise.reject(errors.GROUP_ALREADY_EXISTS())
                 }
                 return groupsData.addGroup(id, newGroup)
             })
@@ -76,17 +76,17 @@ export default function init(groupsData, footballData, usersServices) {
     // Output: a group or a internal error object.
     function getGroup(userToken, groupName){
         if (typeof groupName !== "string" || groupName.trim() === "")
-            return errors.INVALID_PARAMETER(groupName)
+            return Promise.reject(errors.INVALID_PARAMETER(groupName))
 
         const userId = usersServices.getUserId(userToken)
         return userId.then(id => {
             if (!id) {
-                return Promise.reject(errors.USER_NOT_FOUND)
+                return Promise.reject(errors.USER_NOT_FOUND())
             }
             const groupPromise = groupsData.getGroup(id, groupName)
             return groupPromise.then(group => {
                 if (!group) {
-                    return Promise.reject(errors.GROUP_NOT_FOUND)
+                    return Promise.reject(errors.GROUP_NOT_FOUND())
                 }
                 return group
             })
@@ -96,9 +96,19 @@ export default function init(groupsData, footballData, usersServices) {
     // Input: a groupName (String) and a userToken (String).
     // Output: a confirming message (object) or an internal error object.
     function deleteGroup(userToken, groupName){
-        const g = checkGroup(userToken, groupName)
-        if (g.internalError) return g
-        return (groupsData.deleteGroup(g.id, g.group.name));
+        const userId = usersServices.getUserId(userToken)
+        return userId.then(id => {
+            if (!id) {
+                return Promise.reject(errors.USER_NOT_FOUND())
+            }
+            const groupPromise = groupsData.getGroup(id, groupName)
+            return groupPromise.then(group => {
+                if (!group) {
+                    return Promise.reject(errors.GROUP_NOT_FOUND())
+                }
+                return groupsData.deleteGroup(id, groupName)
+            })
+        })
     }
 
     // Input: a groupName (String), a userToken (String) and a new group object.
@@ -127,31 +137,40 @@ export default function init(groupsData, footballData, usersServices) {
     // Input: a groupName (String), a userToken (String) and a new player object.
     // Output: the updated group with the new player or a internal error object.
     function addPlayerToGroup(userToken, groupName, player){
-        if(!isValidPlayer(player))
-            return errors.INVALID_PLAYER()
-
-        const g = checkGroup(userToken, groupName)
-        if (g.internalError) return g
-        
-        if (isPlayerInGroup(g.group, player.playerId))
-            return errors.PLAYER_ALREADY_EXISTS(player.playerName)
-
-        if(isSquadFull(g.group))
-            return errors.SQUAD_IS_FULL(groupName)
-
-        return groupsData.addPlayerToGroup(g.id, g.group.name, player)
+        if(!isValidPlayer(player)){
+            return Promise.reject(errors.INVALID_PLAYER())
+        }
+        const userId = usersServices.getUserId(userToken)
+        return userId.then(id => {
+            const groupPromise = groupsData.getGroup(id, groupName)
+            return groupPromise.then(group => {
+                if (!group) {
+                    return Promise.reject(errors.GROUP_NOT_FOUND())
+                }
+                if (isPlayerInGroup(group, player.playerId)){
+                    return Promise.reject(errors.PLAYER_ALREADY_EXISTS(player.playerName))
+                }
+                if(isSquadFull(group)){
+                    return Promise.reject(errors.SQUAD_IS_FULL(groupName))
+                }
+                return groupsData.addPlayerToGroup(id, groupName, player)
+            })
+        })
     }
 
     // Input: a groupName (String), a userToken (String) and a player id (String).
     // Output: a confirming message (object) or an internal error object.
     function removePlayerFromGroup(userToken, groupName, playerId){
-        const g = checkGroup(userToken, groupName)
-        if (g.internalError) return g
-
-        if (!isPlayerInGroup(g.group, playerId))
-            return errors.PLAYER_NOT_FOUND(playerId)
-        
-        return groupsData.removePlayerFromGroup(g.id, g.group.name, playerId)
+        const userId = usersServices.getUserId(userToken)
+        return userId.then(id => {
+            const groupPromise = groupsData.getGroup(id, groupName)
+            return groupPromise.then(group => {
+                if (!isPlayerInGroup(group, playerId)){
+                    return Promise.reject(errors.PLAYER_NOT_FOUND(playerId))
+                }
+                return groupsData.removePlayerFromGroup(id, groupName, playerId)
+            })
+        })
     }
 
     // Output: All the available competitions.
@@ -163,27 +182,6 @@ export default function init(groupsData, footballData, usersServices) {
     // Output: All the teams that participated on the specified competition.
     async function getTeams(competitionCode, season) {
         return await footballData.getTeams(competitionCode, season)
-    }
-
-    // Auxiliary function: gets userId by it's token and returns a object with the id and the group with groupName (Or undefined if group does not exist).
-    function getIdAndGroup(userToken, groupName){
-        const userId = usersServices.getUserId(userToken)
-        const group = userId.then(id => {
-            return groupsData.getGroup(id, groupName.toUpperCase())
-        })
-        return group.then(g => {
-            return {id: g.userId, group: g}
-        })
-    }
-
-    // Auxiliary function: Check if user has already created a group with groupName
-    // Returns group if it exists, else, throws Internal Server Error
-    function checkGroup(userToken, groupName){
-        const r = getIdAndGroup(userToken, groupName)
-        if (!r.group)
-            return errors.GROUP_NOT_FOUND(groupName);
-        
-        return r
     }
 }
 
@@ -219,11 +217,10 @@ function isValidPlayer(pl){
     )
 }
   
-function isPlayerInGroup(group, pl){
+function isPlayerInGroup(group, playerId){
     const idx = group.players.findIndex(
-        el => el.playerId === pl
+        p => p.playerId === playerId
     )
-    
     return (idx != -1)
 }
   

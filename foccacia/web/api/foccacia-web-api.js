@@ -91,48 +91,48 @@ export default function init(groupsServices) {
 
     function internal_deleteGroup(req, res){
       const groupName = req.params.groupName
-      let output = groupsServices.deleteGroup(req.userToken, groupName);
-
-      // Success case
-      if (output.internalError) return output;
-      res.json({
-        status: `Group ${groupName} was deleted!`,
-      });
+      return groupsServices.deleteGroup(req.userToken, groupName).then(
+        removedGroup => {
+          res.json({
+            status: `Group ${groupName} was deleted!`,
+            group: removedGroup
+          });
+        })
     }
 
     function internal_updateGroup(req, res){
       const groupName = req.params.groupName
-      return groupsServices.updateGroup(req.userToken, groupName, req.body).then(newGroup => {
-        res.json({
-          status: `Group ${groupName} was updated!`,
-          group: newGroup
-        });
-      })
+      return groupsServices.updateGroup(req.userToken, groupName, req.body).then(
+        newGroup => {
+          res.json({
+            status: `Group ${groupName} was updated!`,
+            group: newGroup
+          });
+        })
     }
 
     function internal_addPlayerToGroup(req, res){
       const groupName = req.params.groupName
-      let output = groupsServices.addPlayerToGroup(req.userToken, groupName, req.body);
-      if (output.internalError) return output;
-
-      // Success case
-      const group = output;
-      res.status(201)
-      res.json({
-        status: `Added player to group ${groupName}!`,
-        group: group
-      });
+      return groupsServices.addPlayerToGroup(req.userToken, groupName, req.body).then(
+        group => {
+          res.status(201)
+          res.json({
+            status: `Added player to group ${groupName}!`,
+            group: group
+          });
+        })
     }  
 
     function internal_removePlayerFromGroup(req, res){
       const groupName = req.params.groupName
       const playerId = req.params.playerId
-      let output = groupsServices.removePlayerFromGroup(req.userToken, groupName, playerId);
-      if (output.internalError) return output;
-      // Success case
-      res.json({
-        status: `Player ${playerId} from group ${groupName} was removed!`,
-      });
+      return groupsServices.removePlayerFromGroup(req.userToken, groupName, playerId).then(
+        group => {
+          res.json({
+            status: `Player ${playerId} from group ${groupName} was removed!`,
+            group: group
+          });
+      })
     }
 
     // Auxiliary module function

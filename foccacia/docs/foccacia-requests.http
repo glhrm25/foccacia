@@ -67,7 +67,7 @@ DELETE http://localhost:8000/groups/group1 HTTP/2
 Authorization: Bearer {{tokenUser2}}
 
 ### Add player to group
-POST http://localhost:8000/groups/PL%20GROUP/players
+POST http://localhost:8000/groups/PL%20Group/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -80,7 +80,7 @@ Authorization: Bearer {{tokenUser2}}
 
 ### Get group PL_GROUP
 
-GET http://localhost:8000/groups/PL%20GROUP HTTP/2
+GET http://localhost:8000/groups/PL%20Group HTTP/2
 Authorization: Bearer {{tokenUser2}}
 
 ### Remove player from group
