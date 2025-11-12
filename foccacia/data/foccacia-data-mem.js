@@ -1,12 +1,11 @@
 export default function init() {
-    // Groups stored by: userId -> { groupName -> groupObject }
     const GROUPS = [];
   
-    function Group(userId, title, description, competition, year){
+    function Group(userId, name, description, competition, year){
       Group.counter = Group.counter === undefined ? 
                      GROUPS.length + 1 : Group.counter + 1;
       this.id = Group.counter;
-      this.title = title;
+      this.name = name;
       this.description = description;
       this.competition = competition
       this.year = year
@@ -34,32 +33,29 @@ export default function init() {
     function getGroup(userId, groupName) {
       return new Promise((resolve, reject) => {
         const group = GROUPS.find(
-          group => group.name == groupName && group.userId == userId
+          group => group.name == groupName.toUpperCase() && group.userId == userId
         );
         resolve(group);
       });
     }    
   
     function addGroup(userId, newGroup) {
-      console.log("DATA")
       return new Promise((resolve, reject) => {
-        const group = new Group(userId, newGroup.title, newGroup.description, newGroup.competition, newGroup.year);
-        GROUPS.push(group);
-        console.log(group)
+        const group = new Group(userId, newGroup.name.toUpperCase(), newGroup.description, newGroup.competition, newGroup.year);
+        GROUPS.push(group)
         resolve(group);
       })
     }
   
     function updateGroup(userId, groupName, updatedData) {
-      const group = GROUPS[userId][groupName];
-      delete GROUPS[userId][groupName] // Delete old group
-
-      group.description = updatedData.description
-      const newName = updatedData.name.toUpperCase()
-      group.name = newName
-      GROUPS[userId][newName] = group // Adds new group with the updates
-
-      return group;
+      return new Promise((resolve, reject) => {
+        const groupIndex = GROUPS.findIndex(
+          group => (group.name == groupName.toUpperCase() && group.userId == userId)
+        )
+        GROUPS[groupIndex].name = updatedData.name.toUpperCase()
+        GROUPS[groupIndex].description = updatedData.description
+        resolve(GROUPS[groupIndex])
+     });
     }
   
     function deleteGroup(userId, groupName) {
@@ -91,10 +87,4 @@ export default function init() {
       GROUPS[userId][groupName].players.splice(idx, 1)
       return {message: "Player successfully removed"};
     }  
-}
-
-function processError(error){
-  console.error(error.message)
-  process.exit(1)
-}
-  
+} 

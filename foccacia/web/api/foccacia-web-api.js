@@ -4,7 +4,7 @@ import { errors } from "../../commons/internal-errors.js";
 
 // Input: the Response Object and the internal error object to be set.
 function setHttpError(res, internalError) {
-  const error = errorToHttp(internalError);
+  const error = errorToHttp(internalError)
   res.status(error.status);
   res.json(error.body);
 }
@@ -102,15 +102,12 @@ export default function init(groupsServices) {
 
     function internal_updateGroup(req, res){
       const groupName = req.params.groupName
-      let output = groupsServices.updateGroup(req.userToken, groupName, req.body);
-      if (output.internalError) return output;
-
-      // Success case
-      const updatedGroup = output;
-      res.json({
-        status: `Group ${groupName} was updated!`,
-        group: updatedGroup
-      });
+      return groupsServices.updateGroup(req.userToken, groupName, req.body).then(newGroup => {
+        res.json({
+          status: `Group ${groupName} was updated!`,
+          group: newGroup
+        });
+      })
     }
 
     function internal_addPlayerToGroup(req, res){
