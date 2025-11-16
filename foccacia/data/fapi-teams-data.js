@@ -4,6 +4,8 @@ let requestOptions = {
 }
 
 export default function init(){
+    const PLAYERS_CACHE = []
+
     // Interface
     return {
         getCompetitions,
@@ -29,9 +31,29 @@ export default function init(){
     async function getTeams(competitionCode, season){
         return await getObjApi(`competitions/${competitionCode}/teams?season=${season}`)
     }
-    // TO-DO:
-    async function getPlayer(playerId){
-        return await getObjApi(``)
+
+    function getPlayer(playerId){
+     return new Promise((resolve, reject) => {
+        const player = PLAYERS_CACHE.find(pl => pl.id == playerId)
+        if (player) return resolve(player) // É NECESSÁRIO O RETURN ????
+        
+        getObjApi(`persons/${playerId}`).then(pl => {
+            const newObj = {
+                playerId: pl.id, 
+                playerName: pl.name, 
+                teamId: pl.currentTeam.id,
+                teamName: pl.currentTeam.name,
+                position: pl.position,
+                nationality: pl.nationality,
+                age: pl.dateOfBirth
+            }
+            PLAYERS_CACHE.push(newObj)
+            resolve(newObj)
+        })
+        .catch(error => {
+            reject(`Player with id ${playerId} not found`) // WHAT TO DO IN CASE OF ERROR????
+        })
+     })
     }
 }
 

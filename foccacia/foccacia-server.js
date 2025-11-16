@@ -72,7 +72,7 @@ app.delete("/groups/:groupName", groupsAPI.deleteGroup);
 app.put("/groups/:groupName", groupsAPI.updateGroup);
 
 // add players to group
-app.post("/groups/:groupName/players", groupsAPI.addPlayerToGroup)
+app.post("/groups/:groupName/players/:playerId", groupsAPI.addPlayerToGroup)
 
 // delete player from group
 app.delete("/groups/:groupName/players/:playerId", groupsAPI.removePlayerFromGroup)

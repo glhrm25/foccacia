@@ -242,33 +242,33 @@ paths:
           $ref: "#/components/responses/404NotFound"
         400:
           $ref: "#/components/responses/400InvalidParameter"
-  /groups/{groupName}/players:
+  /groups/{groupName}/players/{playerId}:
     # ADD A PLAYER TO GROUP
     post:
-      tags:
-        - Players
-      summary: adds a new player to group
-      description: Adds a new player to the system
-      operationId: addPlayer
-      requestBody:
-        description: Player to add
-        content:
-          application/json:
+        tags:
+          - Players
+        summary: adds a new player to group
+        description: Adds a new player to the system
+        operationId: addPlayer
+        parameters:
+          - name: playerId
+            in: path
+            description: Id of the player to be added
+            required: true
             schema:
-              $ref: "#/components/schemas/Group_Player"
-      responses:
-        201:
-          description: Player added successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GroupPlayerAdd"
-        401:
-          $ref: "#/components/responses/401Unauthorized"
-        400:
-          $ref: "#/components/responses/400InvalidBody"
+              type: string
+        responses:
+          201:
+            description: Player added successfully
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/GroupPlayerAdd"
+          401:
+            $ref: "#/components/responses/401Unauthorized"
+          400:
+            $ref: "#/components/responses/400InvalidBody"
     # DELETE A PLAYER FROM A GROUP
-  /groups/{groupName}/players/{playerId}:
     delete:
       tags:
         - Players

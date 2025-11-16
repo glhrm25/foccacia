@@ -63,7 +63,7 @@ export default function init(groupsServices) {
     }
 
     function internal_getAllGroups(req, res){
-      return groupsServices.getAllGroups(req.userToken).then(
+      return groupsServices.getAllGroups(req.userToken, req.query).then(
         groups => {
           res.json({groups: groups})
         }
@@ -113,7 +113,8 @@ export default function init(groupsServices) {
 
     function internal_addPlayerToGroup(req, res){
       const groupName = req.params.groupName
-      return groupsServices.addPlayerToGroup(req.userToken, groupName, req.body).then(
+      const playerId = req.params.playerId
+      return groupsServices.addPlayerToGroup(req.userToken, groupName, playerId).then(
         group => {
           res.status(201)
           res.json({

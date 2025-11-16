@@ -16,6 +16,7 @@ export default function init() {
     return {
       getGroupsForUser,
       getGroup,
+      searchGroups,
       addGroup,
       updateGroup,
       deleteGroup,
@@ -34,10 +35,24 @@ export default function init() {
       return new Promise((resolve, reject) => {
         const group = GROUPS.find(
           group => group.name == groupName && group.userId == userId
-        );
-        resolve(group);
+        )
+        resolve(group)
+      })
+    }
+    
+    function searchGroups(groups, querySearch) {
+      return new Promise((resolve, reject) => { 
+        if (! querySearch) resolve(groups)
+        const searchedTasks = groups.filter(
+          group => (group.name.includes(querySearch) || 
+                    group.description.includes(querySearch)
+                    //group.competition.includes(querySearch) || 
+                    //group.year.includes(querySearch)
+                  )
+        )
+        resolve(searchedTasks);
       });
-    }    
+    }
   
     function addGroup(userId, newGroup) {
       return new Promise((resolve, reject) => {
@@ -55,7 +70,7 @@ export default function init() {
         GROUPS[groupIndex].name = updatedData.name
         GROUPS[groupIndex].description = updatedData.description
         resolve(GROUPS[groupIndex])
-     });
+     })
     }
   
     function deleteGroup(userId, groupName) {
@@ -68,17 +83,18 @@ export default function init() {
         resolve(group)
       })
     }
-
-    function addPlayerToGroup(userId, groupName, player) {
-      return new Promise((resolve, reject) => {
+  
+   function addPlayerToGroup(userId, groupName, player) {
+      return new Promise(async (resolve, reject) => {
         const idx = GROUPS.findIndex(
           g => g.userId == userId && g.name == groupName
         )
-        GROUPS[idx].players.push(player)
+        const obj = {playerId: player.playerId, playerName: player.playerName, teamId: player.teamId, teamName: player.teamName}
+        GROUPS[idx].players.push(obj)
         resolve(GROUPS[idx])
       })
     }
-  
+
     function removePlayerFromGroup(userId, groupName, playerId){
       return new Promise((resolve, reject) => {
         const groupIdx = GROUPS.findIndex(
