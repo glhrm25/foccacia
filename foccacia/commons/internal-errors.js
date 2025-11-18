@@ -27,8 +27,8 @@ export const errors = {
     INVALID_USER: (who) => {
         return new Error(INTERNAL_ERROR_CODES.INVALID_USER, `Invalid username '${who}'.`);
     },
-    INVALID_PLAYER: () => {
-        return new Error(INTERNAL_ERROR_CODES.INVALID_USER, `Invalid player. Player needs a valid name, id, team name and team id.`);
+    INVALID_PLAYER: (who) => {
+        return new Error(INTERNAL_ERROR_CODES.INVALID_USER, `Invalid player with player id ${who}.`);
     },
     INVALID_GROUP: () => {
         return new Error(INTERNAL_ERROR_CODES.INVALID_GROUP, `Invalid Group. A group needs a valid name, description, competition and year.`);

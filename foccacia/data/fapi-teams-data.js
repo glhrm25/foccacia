@@ -1,3 +1,5 @@
+import { errors } from '../commons/internal-errors.js'
+
 let requestOptions = {
     method: `GET`,
     headers: {'X-Auth-Token': process.env.key}
@@ -35,7 +37,7 @@ export default function init(){
     function getPlayer(playerId){
      return new Promise((resolve, reject) => {
         const player = PLAYERS_CACHE.find(pl => pl.id == playerId)
-        if (player) return resolve(player) // É NECESSÁRIO O RETURN ????
+        if (player) return resolve(player)
         
         getObjApi(`persons/${playerId}`).then(pl => {
             const newObj = {
@@ -48,11 +50,14 @@ export default function init(){
                 age: pl.dateOfBirth
             }
             PLAYERS_CACHE.push(newObj)
-            resolve(newObj)
+           resolve(newObj)
+           //return newObj
         })
+        
         .catch(error => {
-            reject(`Player with id ${playerId} not found`) // WHAT TO DO IN CASE OF ERROR????
+            reject(errors.INVALID_PLAYER(playerId)) // WHAT TO DO IN CASE OF ERROR????
         })
+        
      })
     }
 }

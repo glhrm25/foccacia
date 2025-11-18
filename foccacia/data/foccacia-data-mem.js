@@ -85,7 +85,7 @@ export default function init() {
     }
   
    function addPlayerToGroup(userId, groupName, player) {
-      return new Promise(async (resolve, reject) => {
+      return new Promise((resolve, reject) => {
         const idx = GROUPS.findIndex(
           g => g.userId == userId && g.name == groupName
         )

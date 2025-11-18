@@ -77,6 +77,10 @@ Authorization: Bearer {{tokenUser2}}
 GET http://localhost:8000/groups?search=Test+Query
 Authorization: Bearer {{tokenUser2}}
 
+### Get groups with competition
+GET http://localhost:8000/groups?competition=PPL
+Authorization: Bearer {{tokenUser2}}
+
 ### Get group PT_GROUP
 
 GET http://localhost:8000/groups/PT%20Group HTTP/2
@@ -103,15 +107,12 @@ DELETE http://localhost:8000/groups/group1 HTTP/2
 Authorization: Bearer {{tokenUser2}}
 
 ### Add player to group
-POST http://localhost:8000/groups/PL%20Group/players/123
+POST http://localhost:8000/groups/PL%20Group/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
 {
-  "playerId": "123",
-  "playerName": "Guilherme",
-  "teamCode": "SLB",
-  "teamName": "Benfica"
+  "playerId": "123"
 }
 
 ### Get group PL_GROUP
@@ -129,7 +130,7 @@ Authorization: Bearer {{tokenUser2}}
 
 ### ADD 12 PLAYERS TO A GROUP AND SEE WHAT HAPPENS
 ### 1/12 Add Player
-POST http://localhost:8000/groups/PL%20Group/players/1
+POST http://localhost:8000/groups/PL%20Group/players/44
 Authorization: Bearer {{tokenUser2}}
 
 ### 2/12 Add Player
