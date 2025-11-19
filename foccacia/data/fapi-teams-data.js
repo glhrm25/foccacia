@@ -34,9 +34,9 @@ export default function init(){
         return await getObjApi(`competitions/${competitionCode}/teams?season=${season}`)
     }
 
-    function getPlayer(playerId){
+    function getPlayer(playerId, year){
      return new Promise((resolve, reject) => {
-        const player = PLAYERS_CACHE.find(pl => pl.id == playerId)
+        const player = PLAYERS_CACHE.find(pl => pl.playerId == playerId)
         if (player) return resolve(player)
         
         getObjApi(`persons/${playerId}`).then(pl => {
@@ -47,14 +47,14 @@ export default function init(){
                 teamName: pl.currentTeam.name,
                 position: pl.position,
                 nationality: pl.nationality,
-                age: pl.dateOfBirth
+                age: year - Number(pl.dateOfBirth.split("-")[0])
             }
             PLAYERS_CACHE.push(newObj)
-           resolve(newObj)
+            resolve(newObj)
            //return newObj
         })
-        
         .catch(error => {
+            console.log(error)
             reject(errors.INVALID_PLAYER(playerId)) // WHAT TO DO IN CASE OF ERROR????
         })
         

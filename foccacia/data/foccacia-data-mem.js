@@ -91,7 +91,7 @@ export default function init() {
         )
         const obj = {playerId: player.playerId, playerName: player.playerName, teamId: player.teamId, teamName: player.teamName}
         GROUPS[idx].players.push(obj)
-        resolve(GROUPS[idx])
+        resolve(obj)
       })
     }
 

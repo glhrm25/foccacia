@@ -1,6 +1,7 @@
-import express from 'express';
-import swaggerUi from 'swagger-ui-express';
-import yaml from 'yamljs';
+import express from 'express'
+import swaggerUi from 'swagger-ui-express'
+import yaml from 'yamljs'
+import cors from 'cors'
 // Import all modules for Dependency Injection:
 import groupsApiInit from './web/api/foccacia-web-api.js';
 import usersApiInit from './web/api/users-web-api.js';
@@ -36,48 +37,56 @@ catch (err) {
   console.error(err);
 }
 
-const app = express(); // Express function returns an app
+if(groupsAPI && usersAPI) {
+  const app = express(); // Express function returns an app
 
-// Swagger UI for the yaml documentation (OpenAPI):
-const swaggerDocument = yaml.load('./docs/foccacia-api.yaml');
-app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  // Swagger UI for the yaml documentation (OpenAPI):
+  const swaggerDocument = yaml.load('./docs/foccacia-api.yaml');
+  app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// Parser the body to JSON
-app.use(express.json());
+  // Enable all CORS requests
+  app.use(cors());
 
-// USERS
-// add user
-app.post("/users", usersAPI.addUser);
+  // Parser the body to JSON
+  app.use(express.json());
 
-// COMPETITIONS
-app.get("/competitions", groupsAPI.getCompetitions);
+  // USERS
+  // add user
+  app.post("/users", usersAPI.addUser);
 
-// TEAMS
-app.get("/competitions/:competitionCode/season/:season/teams", groupsAPI.getTeams);
+  // COMPETITIONS
+  app.get("/competitions", groupsAPI.getCompetitions);
 
-// GROUPS
-// get group by id
-app.get("/groups/:groupName", groupsAPI.getGroup);
+  // TEAMS
+  app.get("/competitions/:competitionCode/season/:season/teams", groupsAPI.getTeams);
 
-// list groups
-app.get("/groups", groupsAPI.getAllGroups);
+  // GROUPS
+  // get group by id
+  app.get("/groups/:groupName", groupsAPI.getGroup);
 
-// create group
-app.post("/groups", groupsAPI.addGroup);
+  // list groups
+  app.get("/groups", groupsAPI.getAllGroups);
 
-// delete group by id
-app.delete("/groups/:groupName", groupsAPI.deleteGroup);
+  // create group
+  app.post("/groups", groupsAPI.addGroup);
 
-// update group by name
-app.put("/groups/:groupName", groupsAPI.updateGroup);
+  // delete group by id
+  app.delete("/groups/:groupName", groupsAPI.deleteGroup);
 
-// add players to group
-app.post("/groups/:groupName/players/:playerId", groupsAPI.addPlayerToGroup)
+  // update group by name
+  app.put("/groups/:groupName", groupsAPI.updateGroup);
 
-// delete player from group
-app.delete("/groups/:groupName/players/:playerId", groupsAPI.removePlayerFromGroup)
+  // add players to group
+  app.post("/groups/:groupName/players", groupsAPI.addPlayerToGroup)
 
-// App listening...
-app.listen(PORT, () =>
-  console.log(`App listening on port ${PORT}!`),
-);
+  // delete player from group
+  app.delete("/groups/:groupName/players/:playerId", groupsAPI.removePlayerFromGroup)
+
+  // Error-Handling Middleware
+  app.use(groupsAPI.errorHandler)
+
+  // App listening...
+  app.listen(PORT, () =>
+    console.log(`App listening on port ${PORT}!`),
+  )
+}

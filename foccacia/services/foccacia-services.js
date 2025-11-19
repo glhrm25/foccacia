@@ -25,6 +25,8 @@ export default function init(groupsData, footballData, usersServices) {
 
     // Input: a query (object) (or an empty object {}) and a user token (String). -> ADICIONAR AS QUERYS ???
     // Output: an array of groups or an internal error object.
+
+    // BUG SHOWING PLAYERS ON THE GROUPS (PLAYERS ADDED AFTER A GET GROUP REQUEST DONT HAVE ALL INFORMATION)
     function getAllGroups(userToken, query){
         const userIdPromise = usersServices.getUserId(userToken)
         const groupsPromise = userIdPromise.then(
@@ -79,7 +81,7 @@ export default function init(groupsData, footballData, usersServices) {
             const groupPromise = groupsData.getGroup(id, groupName)
             return groupPromise.then(group => {
                 if (!group) return Promise.reject(errors.GROUP_NOT_FOUND(groupName))
-                return Promise.all(group.players.map(pl => footballData.getPlayer(pl.playerId)))
+                return Promise.all(group.players.map(pl => footballData.getPlayer(pl.playerId, group.year)))
                     .then(players => {
                         group.players = players;
                         return group
@@ -126,7 +128,7 @@ export default function init(groupsData, footballData, usersServices) {
     }  
 
     // Input: a groupName (String), a userToken (String) and the new player id (string).
-    // Output: the updated group with the new player or a internal error object.
+    // Output: the added player or an internal error object.
     function addPlayerToGroup(userToken, groupName, playerId){
         const userId = usersServices.getUserId(userToken)
         return userId.then(id => {
@@ -138,7 +140,7 @@ export default function init(groupsData, footballData, usersServices) {
                 
                 if(isSquadFull(group)) return Promise.reject(errors.SQUAD_IS_FULL(groupName))
                 
-                return footballData.getPlayer(playerId).then(pl => {
+                return footballData.getPlayer(playerId, group.year).then(pl => {
                     return groupsData.addPlayerToGroup(id, groupName, pl)
                 })
             })
@@ -162,14 +164,24 @@ export default function init(groupsData, footballData, usersServices) {
     }
 
     // Output: All the available competitions.
-    async function getCompetitions() {
-        return await footballData.getCompetitions()
+    function getCompetitions() {
+        return footballData.getCompetitions().then(output => {
+            return output.competitions.map(comp => ({ name: comp.name, code: comp.code }))
+        })
     }
 
     // Input: a competitionCode (String) and a season (String)
     // Output: All teams that participated on the specified competition.
-    async function getTeams(competitionCode, season) {
-        return await footballData.getTeams(competitionCode, season)
+    function getTeams(competitionCode, season) {
+        return footballData.getTeams(competitionCode, season).then(output => {
+            return output.teams.map(t => (
+                {
+                    name: t.name, 
+                    country: t.area.name, 
+                    squad: t.squad.map(p => ({name: p.name, position: p.position}))
+                })
+            )
+        })
     }
 }
 

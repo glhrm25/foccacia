@@ -28,8 +28,10 @@ export default function init(groupsServices) {
       deleteGroup: processRequest(internal_deleteGroup),
       addPlayerToGroup: processRequest(internal_addPlayerToGroup),
       removePlayerFromGroup: processRequest(internal_removePlayerFromGroup),
+      errorHandler: errorHandler
     };
-
+    
+    /*
     function processRequest(operation){
       return function (req, res){
         const token = getToken(req);
@@ -44,6 +46,30 @@ export default function init(groupsServices) {
           return setHttpError(res, internalError);
         });
       };
+    }
+    */
+
+    function processRequest(operation){
+      return function (req, res, next){
+        const token = getToken(req);
+        // Handling missing token
+        if (! token){
+          next(errors.MISSING_TOKEN());
+        }
+        else {
+          req.userToken = token;
+          // Call the operation:
+          operation(req, res).catch(next);
+        }
+      };
+    }
+
+    function errorHandler(err, req, res, next){
+      let error = err;
+      if (err instanceof SyntaxError && err.type == "entity.parse.failed") {
+        error = errors.INVALID_JSON_PARSER();
+      }
+      setHttpError(res, error);
     }
 
     async function internal_getCompetitions(req, res){
@@ -113,13 +139,13 @@ export default function init(groupsServices) {
 
     function internal_addPlayerToGroup(req, res){
       const groupName = req.params.groupName
-      const playerId = req.params.playerId
+      const playerId = req.body.playerId
       return groupsServices.addPlayerToGroup(req.userToken, groupName, playerId).then(
-        group => {
+        newPlayer => {
           res.status(201)
           res.json({
             status: `Added player to group ${groupName}!`,
-            group: group
+            player: newPlayer
           });
         })
     }  
