@@ -14,7 +14,8 @@ export const INTERNAL_ERROR_CODES = {
     INVALID_PLAYER: 13,
     PLAYER_ALREADY_EXISTS: 14,
     PLAYER_NOT_FOUND: 15,
-    SQUAD_IS_FULL: 16
+    SQUAD_IS_FULL: 16,
+    INVALID_JSON_PARSER: 17
 };
 
 // Constructor function for an Error
@@ -72,4 +73,7 @@ export const errors = {
     SQUAD_IS_FULL: (what) => { 
         return new Error(INTERNAL_ERROR_CODES.SQUAD_IS_FULL,`Squad of group ${what} is full.`);
     },
+    INVALID_JSON_PARSER: () => {
+        return new Error(INTERNAL_ERROR_CODES.INVALID_JSON_PARSER, `Invalid body. Cannot parser the body.`);
+    }
 }
