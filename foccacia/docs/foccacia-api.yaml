@@ -68,8 +68,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Competitions"
-        400:
-          $ref: "#/components/responses/400MissingParameter"
         401:
           $ref: "#/components/responses/401Unauthorized"
 # TEAMS
@@ -79,7 +77,7 @@ paths:
       tags:
         - Teams
       summary: get teams from competition
-      description: Get all teams from a competition from a season.
+      description: Get all teams from the specified competition's season'.
       operationId: getAllTeamsFromCompetition
       parameters:
       - name: competitionCode
@@ -93,7 +91,7 @@ paths:
         required: true
         schema:
           type: string
-        description: Season of the competition (e.g., 2023, 2023/24)
+        description: Season of the competition (e.g., 2024, 2025)
       responses:
         200:
           description: In case of success, returns a list of Teams.
@@ -117,13 +115,11 @@ paths:
       operationId: getAllGroups
       responses:
         200:
-          description: In case of success, returns a list of groups.
+          description: In case of success, returns an array of groups.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Groups"
-        400:
-          $ref: "#/components/responses/400MissingParameter"
         401:
           $ref: "#/components/responses/401Unauthorized"
     # CREATE A GROUP
@@ -193,7 +189,7 @@ paths:
           schema:
             type: string
       requestBody:
-        description: Group to replace
+        description: Object with name and description to replace on the group
         content:
           application/json:
             schema:
@@ -235,14 +231,17 @@ paths:
                 properties:
                   status:
                     type: string
-                    example: Group deleted successfully
+                    example: Group Best XI deleted successfully
+                  group:
+                    $ref: "#/components/schemas/Group"
+
         401:
           $ref: "#/components/responses/401Unauthorized"
         404:
           $ref: "#/components/responses/404NotFound"
         400:
           $ref: "#/components/responses/400InvalidParameter"
-  /groups/{groupName}/players/{playerId}:
+  /groups/{groupName}/players:
     # ADD A PLAYER TO GROUP
     post:
         tags:
@@ -251,19 +250,31 @@ paths:
         description: Adds a new player to the system
         operationId: addPlayer
         parameters:
-          - name: playerId
-            in: path
-            description: Id of the player to be added
-            required: true
-            schema:
-              type: string
+        - name: groupName
+          in: path
+          description: Name of the group to be modified
+          required: true
+          schema:
+            type: string
+        requestBody:
+          description: Id of player to be added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/addPlayer"
         responses:
           201:
-            description: Player added successfully
+            description: "Player added successfully"
             content:
               application/json:
                 schema:
-                  $ref: "#/components/schemas/GroupPlayerAdd"
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      example: Added player to group PL Group
+                    player:
+                      $ref: "#/components/schemas/NewPlayer"
           401:
             $ref: "#/components/responses/401Unauthorized"
           400:
@@ -290,7 +301,7 @@ paths:
             type: string
       responses:
         200:
-          description: "Player successfully removed"
+          description: Updated group without the specified player
           content:
             application/json:
               schema:
@@ -298,7 +309,9 @@ paths:
                 properties:
                   status:
                     type: string
-                    example: Player removed successfully
+                    example: Player 123 from group PL Group was removed
+                  group:
+                    $ref: "#/components/schemas/Group"
         401:
           $ref: "#/components/responses/401Unauthorized"
         404:
@@ -324,11 +337,11 @@ components:
             $ref: "#/components/schemas/Competition"
     Competition:
       required:
-        - id
+        - code
         - name
       type: object
       properties:
-        id:
+        code:
           type: string
           example: EPL
         name:
@@ -383,18 +396,24 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Group"
-    Group:
-    # Objeto do tipo {name: <Nome do Grupo>, description: <Descrição do grupo>, competition: <Competição>, year: <Ano>, players: <Array de jogadores}    
+    # Objeto do tipo {name: <Nome do Grupo>, description: <Descrição do grupo>, competition: <Competição>, year: <Ano>, players: <Array de jogadores}
+    Group:    
       type: object
       required:
+        - id
         - name
         - description
         - competition
         - year
+        - players
+        - userId
       properties:
+        id:
+          type: integer
+          example: 1
         name:
           type: string
-          example: PL Group
+          example: Best XI
         description:
           type: string
           example: Best premier league players
@@ -403,8 +422,15 @@ components:
         year:
           type: integer
           example: 2024
-  # Group_Player -> Player with more specifications.
-    Group_Player:
+        players:
+          type: array
+          items:
+            $ref: "#/components/schemas/Full_Player"
+        userId:
+          type: integer
+          example: 1
+  # Full_Player -> Player with more specifications.
+    Full_Player:
       type: object
       required:
         - playerId
@@ -416,21 +442,37 @@ components:
         - age
       properties:
         playerId:
-          type: string
+          type: integer
+          example: 44
         playerName:
           type: string
+          example: "Cristiano Ronaldo"
         teamId:
-          type: string
+          type: integer
+          example: 765
         teamName:
           type: string
+          example: "Portugal"
         position:
           type: string
+          example: "Offence"
         nationality:
           type: string
+          example: "Portugal"
         age:
-          type: number
-
-    GroupPlayerAdd:
+          type: integer
+          example: 39
+  # addPlayer -> Player to be added
+    addPlayer:
+      type: object
+      required:
+        - playerId
+      properties:
+        playerId:
+          type: integer
+          example: 44
+  # NewPlayer -> New Player stored in the group
+    NewPlayer:
       type: object
       required:
         - playerId
@@ -439,13 +481,18 @@ components:
         - teamName
       properties:
         playerId:
-          type: string
+          type: integer
+          example: 44
         playerName:
           type: string
+          example: Cristiano Ronaldo
         teamCode:
-          type: string
+          type: integer
+          example: 765
         teamName:
           type: string
+          example: Portugal
+
 
     # New group to replace (update) another group.      
     UpdateGroup:  
