@@ -4,10 +4,13 @@ export default function init(groupsData, footballData, usersServices) {
 
     // Verify the dependencies:
     if(! usersServices){
-        throw errors.INVALID_ARGUMENT('usersServices');
+        throw errors.INVALID_PARAMETER('usersServices');
     }
     if(! groupsData){
-        throw errors.INVALID_ARGUMENT('tasksData');
+        throw errors.INVALID_PARAMETER('groupsData');
+    }
+    if(! footballData){
+        throw errors.INVALID_PARAMETER('footballData');
     }
 
     // Interface

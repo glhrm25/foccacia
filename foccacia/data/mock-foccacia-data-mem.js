@@ -1,236 +1,124 @@
-// MOCK of tasks data
-// This is a simple implementation: to be refactored.
+const NUM_GROUPS = 10;
+
+// Initial array for tests:
+const GROUPS = new Array(NUM_GROUPS)
+                .fill(0).map((v, idx) => { 
+                    return { 
+                        id: idx, 
+                        name: `Group ${idx}`, 
+                        description: `Group ${idx} description`,
+                        competition: {code: "MCP", name: "MOCK COMPETITION"},
+                        year: 2025,
+                        players: [],
+                        userId: (idx % 2 + 1) // user 1 or 2
+                     }
+                });
+
 export default function init() {
+    function Group(userId, name, description, competition, year){
+      Group.counter = Group.counter === undefined ? 
+                     GROUPS.length + 1 : Group.counter + 1;
+      this.id = Group.counter;
+      this.name = name;
+      this.description = description;
+      this.competition = competition
+      this.year = year
+      this.players = []
+      this.userId = userId
+    }
 
-  //
-  // MOCK DATA
-  //
-
-  const competitions = [
-    { code: "EPL", name: "Premier League" },
-    { code: "UCL", name: "Champions League" }
-  ];
-
-  const teams = {
-    "EPL-2024": [
-      {
-        teamId: "T1",
-        name: "Arsenal",
-        country: "England",
-        players: [
-          { playerId: "P1", playerName: "Saka", position: "RW", nationality: "England", age: 22 },
-          { playerId: "P2", playerName: "Odegaard", position: "CM", nationality: "Norway", age: 25 }
-        ]
-      },
-      {
-        teamId: "T2",
-        name: "Manchester City",
-        country: "England",
-        players: [
-          { playerId: "P3", playerName: "Haaland", position: "ST", nationality: "Norway", age: 23 },
-          { playerId: "P4", playerName: "De Bruyne", position: "CM", nationality: "Belgium", age: 33 }
-        ]
-      }
-    ],
-    "UCL-2024": [
-      {
-        teamId: "T3",
-        name: "Real Madrid",
-        country: "Spain",
-        players: [
-          { playerId: "P5", playerName: "Vinicius Jr", position: "LW", nationality: "Brazil", age: 24 },
-          { playerId: "P6", playerName: "Bellingham", position: "AM", nationality: "England", age: 21 }
-        ]
-      }
-    ]
-  };
-
-  // Groups stored by: userToken -> { groupName -> groupObject }
-  const groups = {};
-
-  //
-  // MOCK DATA INTERFACE (used by services)
-  //
-  return {
-    getCompetitions,
-    getTeams,
-    getGroupsForUser,
-    getGroup,
-    addGroup,
-    updateGroup,
-    deleteGroup,
-    addPlayerToGroup,
-    removePlayerFromGroup,
-    isValidGroup,
-    isValidUpdate,
-    isValidPlayer,
-    isPlayerInGroup,
-    isSquadFull
-  };
-
-
-  //
-  // FUNCTIONS
-  //
-
-  function getCompetitions() {
-    return [...competitions];
-  }
-
-  function getTeams(competitionCode, season) {
-    const key = `${competitionCode}-${season}`;
-    return teams[key] ? [...teams[key]] : [];
-  }
-
-  function getGroupsForUser(userToken) {
-    if (!groups[userToken]) groups[userToken] = {};
-    return Object.values(groups[userToken]);
-  }
-
-  function getGroup(userToken, groupName) {
-    const userGroups = groups[userToken]
-      if (!userGroups) return userGroups;
-    
-      return userGroups[groupName];
-  }    
-
-  function addGroup(userToken, groupData) {
-    if (!groups[userToken]) groups[userToken] = {};
-
-    const newGroup = {
-      name: groupData.name.toUpperCase(),
-      description: groupData.description,
-      competition: groupData.competition,
-      year: groupData.year,
-      players: []
+    return {
+      getGroupsForUser,
+      getGroup,
+      searchGroups,
+      addGroup,
+      updateGroup,
+      deleteGroup,
+      addPlayerToGroup,
+      removePlayerFromGroup
     };
-
-    groups[userToken][newGroup.name] = newGroup;
-    return newGroup;
-  }
-
-  function updateGroup(userToken, groupName, updatedData) {
-    if (!groups[userToken]) groups[userToken] = {};
-    const group = groups[userToken][groupName];
     
-    // Atualizar campos
-    group.description = updatedData.description ?? group.description;
+    function getGroupsForUser(userId, query) {
+      return new Promise((resolve, reject) => {
+        const userGroups = GROUPS.filter(group => group.userId == userId)
+        resolve(userGroups)
+      })
+    }
   
-    // Se o nome mudar, temos de atualizar a chave do dicionário
-    if (updatedData.name && updatedData.name !== groupName) {
-      const newName = updatedData.name.toUpperCase();
-
-      // Remover da chave antiga
-      delete groups[userToken][groupName];
-
-      // Atualizar a propriedade
-      group.name = newName;
-    
-      // Inserir com a nova chave
-      groups[userToken][newName] = group;
+    function getGroup(userId, groupName) {
+      return new Promise((resolve, reject) => {
+        const group = GROUPS.find(
+          group => group.name == groupName && group.userId == userId
+        )
+        resolve(group)
+      })
     }
     
-    return group;
-  }
-
-  function deleteGroup(userToken, groupName) {
-    delete groups[userToken][groupName];
-    return { ok: true };
-  }
-
-    // Adicionar player ao grupo
-  function addPlayerToGroup(userToken, groupName, player) {
-    if (!groups[userToken] || !groups[userToken][groupName.toUpperCase()]) {
-      return { internalError: { code: "NOT_FOUND" } };
+    function searchGroups(groups, querySearch) {
+      return new Promise((resolve, reject) => { 
+        if (! querySearch) resolve(groups)
+        const searchedTasks = groups.filter(
+          group => (group.name.includes(querySearch) || 
+                    group.description.includes(querySearch)
+                    //group.competition.includes(querySearch) || 
+                    //group.year.includes(querySearch)
+                  )
+        )
+        resolve(searchedTasks);
+      });
+    }
+  
+    function addGroup(userId, newGroup) {
+      return new Promise((resolve, reject) => {
+        const group = new Group(userId, newGroup.name, newGroup.description, newGroup.competition, newGroup.year);
+        GROUPS.push(group)
+        resolve(group);
+      })
+    }
+  
+    function updateGroup(userId, groupName, updatedData) {
+      return new Promise((resolve, reject) => {
+        const groupIndex = GROUPS.findIndex(
+          group => (group.name == groupName && group.userId == userId)
+        )
+        GROUPS[groupIndex].name = updatedData.name
+        GROUPS[groupIndex].description = updatedData.description
+        resolve(GROUPS[groupIndex])
+     })
+    }
+  
+    function deleteGroup(userId, groupName) {
+      return new Promise((resolve, reject) => {
+        const idx = GROUPS.findIndex(
+          g => g.userId == userId && g.name == groupName
+        )
+        const group = GROUPS[idx]
+        GROUPS.splice(idx, 1)
+        resolve(group)
+      })
+    }
+  
+   function addPlayerToGroup(userId, groupName, player) {
+      return new Promise((resolve, reject) => {
+        const idx = GROUPS.findIndex(
+          g => g.userId == userId && g.name == groupName
+        )
+        const obj = {playerId: player.playerId, playerName: player.playerName, teamId: player.teamId, teamName: player.teamName}
+        GROUPS[idx].players.push(obj)
+        resolve(obj)
+      })
     }
 
-    const group = groups[userToken][groupName.toUpperCase()];
-
-    // Verifica limite de 11 jogadores
-    if (group.players.length >= 11) {
-      return { internalError: { code: "MAX_PLAYERS" } };
-    }
-
-    group.players.push({
-      playerId: player.playerId,
-      playerName: player.playerName,
-      teamCode: player.teamCode,
-      teamName: player.teamName,
-      position: player.position, // opcional se quiseres
-      nationality: player.nationality,
-      age: player.age
-    });
-
-    return group;
-  }
-
-  function removePlayerFromGroup(userToken, groupName, playerId){
-      
-      if (!groups[userToken]) groups[userToken] = {};
-
-      if (!groups[userToken][groupName]) {
-        return { internalError: { code: "NOT_FOUND" } };
-      }
-      
-      const player = groups[userToken][groupName].players.find(
-        p => p.playerId === playerId
-      )
-      if (!player) {
-        return { internalError: { code: "NOT_FOUND" } };
-      }
-
-      groups[userToken][groupName].players = groups[userToken][groupName].players.filter(
-        p => p.playerId !== playerId
-      );
-      return { ok: true };
-  }  
-
-  function isValidGroup(group) {
-  if (
-      group && (typeof group === "object") && 
-      (typeof group.name === "string") && (group.name.trim() !== "") &&
-      (typeof group.description === "string") && (group.description.trim() !== "") &&
-      group.competition && (typeof group.competition === "object") &&
-      (typeof group.competition.code === "string") && (group.competition.code.trim() !== "") &&
-      (typeof group.competition.name === "string") && (group.competition.name.trim() !== "") &&
-      group.year && (typeof group.year === "number") && (!isNaN(Number(group.year)))
-    ) return true
-    else return false;
-  }
-
-  function isValidUpdate(update){
-    const group = update
-    if (
-      group && (typeof group === "object") && 
-      (typeof group.name === "string") && (group.name.trim() !== "") &&
-      (typeof group.description === "string") && (group.description.trim() !== "")
-    ) return true
-    else return false
-  }
-
-  function isValidPlayer(pl){
-    if(
-      pl && (typeof pl === "object") &&
-      (typeof pl.playerId === "string") && (pl.playerId !== "") &&
-      (typeof pl.playerName === "string") && (pl.playerId !== "") &&
-      (typeof pl.teamCode === "string") && (pl.playerId !== "") &&
-      (typeof pl.teamName === "string") && (pl.playerId !== "")
-    ) return true
-    return false
-  }
-
-  function isPlayerInGroup(userToken, groupName, pl){
-    const idx = groups[userToken][groupName].players.findIndex(
-      el => el.playerId === pl
-    )
-    if (idx != -1){
-      return true
-    }
-    return false
-  }
-
-  function isSquadFull(userToken, groupName){
-    if (groups[userToken][groupName].players.length >= 11) return true
-    else return false
-  }
-}
+    function removePlayerFromGroup(userId, groupName, playerId){
+      return new Promise((resolve, reject) => {
+        const groupIdx = GROUPS.findIndex(
+          g => g.userId == userId && g.name == groupName
+        )
+        const playerIdx = GROUPS[groupIdx].players.findIndex(
+          p => p.playerId == playerId
+        )
+        GROUPS[groupIdx].players.splice(playerIdx, 1)
+        resolve(GROUPS[groupIdx])
+      })
+    }  
+} 

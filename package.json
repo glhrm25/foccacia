@@ -1,8 +1,15 @@
 {
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "mocha": "^11.7.5"
+  },
+  "scripts": {
+    "test": "mocha"
+  }
 }

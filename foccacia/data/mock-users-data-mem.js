@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 
-// MOCK of users data
+// MOCK of users data (async)
 // This is a simple implementation: to be refactored.
 
 const USERS = [
@@ -30,22 +30,17 @@ export default function init(){
   }
 
   function addUser(username){
-    let user = {
-      id: nextId(),
-      token: crypto.randomUUID(),
-      name: username
-    };
-    USERS.push(user);
-    return user;
+    return new Promise((resolve, reject) => {
+      let user = {
+        id: nextId(),
+        token: crypto.randomUUID(),
+        name: username
+      };
+      USERS.push(user);
+      resolve(user);
+    });
   }
 
-  /*
-  function getUserId(token){
-    let user = USERS.find(user => user.token == token);
-    if (user)
-      return user.id;
-  }
-    */
   function getUserId(token){
     return new Promise((resolve, reject) => {
       let user = USERS.find(user => user.token == token);
@@ -54,8 +49,9 @@ export default function init(){
   }
 
   function getUserIdByName(username){
-    const user = USERS.find(user => user.name == username);
-    if (user)
-      return user.id;
+    return new Promise((resolve, reject) => {
+      const user = USERS.find(user => user.name == username);
+      resolve(user?.id); // user id or undefined
+    });
   }
 }
