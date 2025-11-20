@@ -396,7 +396,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Group"
-    # Objeto do tipo {name: <Nome do Grupo>, description: <Descrição do grupo>, competition: <Competição>, year: <Ano>, players: <Array de jogadores}
+  # Objeto do tipo {name: <Nome do Grupo>, description: <Descrição do grupo>, competition: <Competição>, year: <Ano>, players: <Array de jogadores}
     Group:    
       type: object
       required:
@@ -492,9 +492,7 @@ components:
         teamName:
           type: string
           example: Portugal
-
-
-    # New group to replace (update) another group.      
+  # New group to replace (update) another group.      
     UpdateGroup:  
       type: object
       required:
@@ -528,7 +526,6 @@ components:
           type: integer
           example: 2024
 
-
 # MESSAGES:
     NewGroupCreated:
       required:
@@ -548,8 +545,7 @@ components:
       properties:
         userName:
           type: string
-          example: asilva
-          
+          example: asilva          
     MissingParameter:
       type: object
       properties:
