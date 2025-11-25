@@ -14,7 +14,6 @@ export default function init(usersServices){
   };
 
   function addUser(req, res){
-    //console.log(req.body);
     const userPromise = usersServices.addUser(req.body.username);
     return userPromise.then(user => {
       res.status(201);

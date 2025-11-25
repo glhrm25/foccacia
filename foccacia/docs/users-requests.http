@@ -4,7 +4,7 @@ POST http://localhost:8000/users
 Content-Type: application/json
 
 {
-    "username": "mpereira"
+    "username": "mpereiraaaaa"
 }
 
 ### Error 400: Invalid body for inserting a new user

@@ -45,10 +45,10 @@ export default function init() {
       })
     }
   
-    function getGroup(userId, groupName) {
+    function getGroup(userId, groupId) {
       return new Promise((resolve, reject) => {
         const group = GROUPS.find(
-          group => group.name == groupName && group.userId == userId
+          group => group.id == groupId && group.userId == userId
         )
         resolve(group)
       })
@@ -76,10 +76,10 @@ export default function init() {
       })
     }
   
-    function updateGroup(userId, groupName, updatedData) {
+    function updateGroup(userId, groupId, updatedData) {
       return new Promise((resolve, reject) => {
         const groupIndex = GROUPS.findIndex(
-          group => (group.name == groupName && group.userId == userId)
+          group => (group.id == groupId && group.userId == userId)
         )
         GROUPS[groupIndex].name = updatedData.name
         GROUPS[groupIndex].description = updatedData.description
@@ -87,10 +87,10 @@ export default function init() {
      })
     }
   
-    function deleteGroup(userId, groupName) {
+    function deleteGroup(userId, groupId) {
       return new Promise((resolve, reject) => {
         const idx = GROUPS.findIndex(
-          g => g.userId == userId && g.name == groupName
+          g => g.userId == userId && g.id == groupId
         )
         const group = GROUPS[idx]
         GROUPS.splice(idx, 1)
@@ -98,10 +98,10 @@ export default function init() {
       })
     }
   
-   function addPlayerToGroup(userId, groupName, player) {
+   function addPlayerToGroup(userId, groupId, player) {
       return new Promise((resolve, reject) => {
         const idx = GROUPS.findIndex(
-          g => g.userId == userId && g.name == groupName
+          g => g.userId == userId && g.id == groupId
         )
         const obj = {playerId: player.playerId, playerName: player.playerName, teamId: player.teamId, teamName: player.teamName}
         GROUPS[idx].players.push(obj)
@@ -109,10 +109,10 @@ export default function init() {
       })
     }
 
-    function removePlayerFromGroup(userId, groupName, playerId){
+    function removePlayerFromGroup(userId, groupId, playerId){
       return new Promise((resolve, reject) => {
         const groupIdx = GROUPS.findIndex(
-          g => g.userId == userId && g.name == groupName
+          g => g.userId == userId && g.id == groupId
         )
         const playerIdx = GROUPS[groupIdx].players.findIndex(
           p => p.playerId == playerId
@@ -120,5 +120,5 @@ export default function init() {
         GROUPS[groupIdx].players.splice(playerIdx, 1)
         resolve(GROUPS[groupIdx])
       })
-    }  
+    }   
 } 

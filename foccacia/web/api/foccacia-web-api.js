@@ -30,24 +30,6 @@ export default function init(groupsServices) {
       removePlayerFromGroup: processRequest(internal_removePlayerFromGroup),
       errorHandler: errorHandler
     };
-    
-    /*
-    function processRequest(operation){
-      return function (req, res){
-        const token = getToken(req);
-        // Handling missing token
-        if (! token){
-          return setHttpError(res, errors.MISSING_TOKEN());
-        }
-        req.userToken = token;
-        // Call the operation:
-        operation(req, res).catch(internalError => {
-          // Handling services errors
-          return setHttpError(res, internalError);
-        });
-      };
-    }
-    */
 
     function processRequest(operation){
       return function (req, res, next){
@@ -97,7 +79,7 @@ export default function init(groupsServices) {
     }
 
     function internal_getGroup(req, res){
-      return groupsServices.getGroup(req.userToken, req.params.groupName).then(
+      return groupsServices.getGroup(req.userToken, req.params.groupId).then(
         groups => {
           res.json({groups: groups})
         }
@@ -116,47 +98,47 @@ export default function init(groupsServices) {
     }
 
     function internal_deleteGroup(req, res){
-      const groupName = req.params.groupName
-      return groupsServices.deleteGroup(req.userToken, groupName).then(
+      const groupId = req.params.groupId
+      return groupsServices.deleteGroup(req.userToken, groupId).then(
         removedGroup => {
           res.json({
-            status: `Group ${groupName} was deleted!`,
+            status: `Group id ${groupId} was deleted!`,
             group: removedGroup
           });
         })
     }
 
     function internal_updateGroup(req, res){
-      const groupName = req.params.groupName
-      return groupsServices.updateGroup(req.userToken, groupName, req.body).then(
+      const groupId = req.params.groupId
+      return groupsServices.updateGroup(req.userToken, groupId, req.body).then(
         newGroup => {
           res.json({
-            status: `Group ${groupName} was updated!`,
+            status: `Group id ${groupId} was updated!`,
             group: newGroup
           });
         })
     }
 
     function internal_addPlayerToGroup(req, res){
-      const groupName = req.params.groupName
+      const gropId = req.params.groupId
       const playerId = req.body.playerId
-      return groupsServices.addPlayerToGroup(req.userToken, groupName, playerId).then(
+      return groupsServices.addPlayerToGroup(req.userToken, gropId, playerId).then(
         newPlayer => {
           res.status(201)
           res.json({
-            status: `Added player to group ${groupName}!`,
+            status: `Added player to group id ${gropId}!`,
             player: newPlayer
           });
         })
     }  
 
     function internal_removePlayerFromGroup(req, res){
-      const groupName = req.params.groupName
+      const groupId = req.params.groupId
       const playerId = req.params.playerId
-      return groupsServices.removePlayerFromGroup(req.userToken, groupName, playerId).then(
+      return groupsServices.removePlayerFromGroup(req.userToken, groupId, playerId).then(
         group => {
           res.json({
-            status: `Player ${playerId} from group ${groupName} was removed!`,
+            status: `Player ${playerId} from group id ${groupId} was removed!`,
             group: group
           });
       })

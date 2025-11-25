@@ -8,7 +8,7 @@ const USERS = [];
 function User(username){
   User.counter = User.counter === undefined ?
                 USERS.length + 1 : User.counter + 1;
-  this.id = USERS.counter;
+  this.id = User.counter;
   this.name = username;
   this.token = crypto.randomUUID();
 }
