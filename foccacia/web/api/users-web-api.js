@@ -1,4 +1,4 @@
-import { errorToHttp } from "./errors-to-http-responses.js";
+import { errorToHttp } from "../errors-to-http-responses.js";
 
 // FUNCTIONS (WEB API):
 

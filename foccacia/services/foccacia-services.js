@@ -199,7 +199,7 @@ function isValidGroup(group) {
         group.competition && (typeof group.competition === "object") &&
         (typeof group.competition.code === "string") && (group.competition.code.trim() !== "") &&
         (typeof group.competition.name === "string") && (group.competition.name.trim() !== "") &&
-        group.year && (typeof group.year === "number") && (!isNaN(Number(group.year)))
+        group.year && (typeof group.year === "string") && (!isNaN(Number(group.year)))
     )
 }
   

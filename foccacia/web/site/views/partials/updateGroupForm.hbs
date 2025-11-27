@@ -1,0 +1,6 @@
+<section class="container p-2 bg-light shadow border">
+    <h3> Update group: {{group.name}} </h3>
+    <form action="/site/groups/{{group.id}}/update" method="POST">
+        {{> updateContentForm}}
+    </form>
+</section>

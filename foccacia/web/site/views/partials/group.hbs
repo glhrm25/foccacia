@@ -1,0 +1,13 @@
+<section class="container p-2">
+    <h2> {{group.name}} </h2>
+    <p> {{group.competition.code}} - ({{group.competition.name}}) - {{group.year}} </p>
+    <p> {{group.description}} </p>
+    <p> XI: {{group.players}} </p>
+    {{#each group.players}}
+    <tr>
+        <td> {{this.playerName}} </td>
+        <td> {{this.position}} </td> 
+    </tr>
+    {{/each}}
+
+</section>
