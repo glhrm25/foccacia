@@ -1,15 +1,4 @@
-# FOCCACIA (Projeto de Grupo 05)
-
-Curso: LEIC – IPW 2025
-Instituto Superior de Engenharia de Lisboa (ISEL)
-
-Grupo 05 - Turma 33d:
-
-52673 – Guilherme Santos
-
-52599 – Duarte Rodrigues
-
-52559 – Yuhao Wang
+# FOCCACIA (PROJETO LOCAL)
 
 # Descrição Geral:
 
