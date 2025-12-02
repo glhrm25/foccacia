@@ -1,0 +1,35 @@
+<section>
+    <h1>Group Best Champions League 2023 {{this.competition}}</h1>
+    {{#each teams}}
+    <p><a href="#{{this.name}}">{{this.name}}</a></p>
+    {{/each}}
+
+    <h1>List of players</h1>
+        {{#each teams}}
+        <div id="{{this.name}}">
+            <h2>{{this.name}}</h2>
+            <h4> Country: {{this.country}} </h4>
+            <table class="table" >
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th></th>
+                </tr>
+                {{#each this.squad}}
+                <tr>
+                    <td>{{this.name}}</td>
+                    <td>{{this.position}}</td>
+                    <td>
+                        <form action="/site/groups/1/players" method="POST">
+                            <input type="hidden" name="playerId" value="1">
+                            <input type="hidden" name="teamId" value="1">
+                            <input type="submit" value="add">
+                        </form>
+                    </td>
+                </tr>
+                {{/each}}
+            </table>
+        </div>
+        {{/each}}
+            
+</section> 

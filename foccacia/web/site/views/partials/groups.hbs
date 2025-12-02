@@ -1,25 +1,25 @@
 <section class="container p-2">
-<h2> Best XI Groups: </h2>
+<h2> Your Groups: </h2>
 
-<!-- Show a task in each row of a table -->
-<table class="table text-nowrap">
-    {{#each groups}}
-    <tr>
-        <td> {{this.name}} -  {{this.competition.code}} - {{this.year}} </td> 
-        <td width="5%">
-            <a href="/site/groups/{{this.id}}" class="btn btn-warning"> Edit </a>
-        </td>
-        <td width="5%">
-            <form action="/site/groups/{{this.id}}/delete" method="POST">
-                <input type="submit" value="delete" class="btn btn-danger">
-            </form>
-        </td>
-    </tr>
-    {{/each}}
-</table>
+    <!-- Show a task in each row of a table -->
+    <table class="table text-nowrap">
+        <tr>
+            <th>Name</th>
+        </tr>
+        {{#each groups}}
+        <tr> 
+            <td width="5%">
+                <a href="/site/groups/{{this.id}}" class="btn btn-warning"> {{this.name}} </a>
+            </td>
+            <td width="5%" style="text-align: right;">
+                <form action="/site/groups/{{this.id}}/delete" method="POST">
+                    <input type="submit" value="delete" class="btn btn-danger">
+                </form>
+            </td>
+        </tr>
+        {{/each}}
+    </table>
 
-<a href="/site/groups/{{this.id}}" class="btn btn-warning">
-    <button style="border-radius: 5px;"> Add Group </button>
-</a>
-
+    <br>
+    <a href="/site/competitions" class="btn btn-primary"> Create a group</a>
 </section>

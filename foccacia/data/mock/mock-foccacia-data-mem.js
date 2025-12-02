@@ -7,7 +7,7 @@ const GROUPS = new Array(NUM_GROUPS)
                         id: idx, 
                         name: `Group ${idx}`, 
                         description: `Group ${idx} description`,
-                        competition: {code: "MCP", name: "MOCK COMPETITION"},
+                        competition: {code: "PL", name: "Premier League"},
                         year: 2025,
                         players: [],
                         userId: (idx % 2 + 1) // user 1 or 2

@@ -87,6 +87,8 @@ if(groupsAPI && usersAPI && groupsSite) {
   // TODO: implement web site to register an user (with passport module).
   // app.post("/site/users", usersSite.addUser); ??
 
+  app.get("/", groupsSite.renderHomePage);
+
   // COMPETITIONS
   app.get("/competitions", groupsAPI.getCompetitions);
   app.get("/site/competitions", groupsSite.getCompetitions);

@@ -1,13 +1,17 @@
 <section class="container p-2">
-    <h2> {{group.name}} </h2>
-    <h4> {{group.competition.code}} - {{group.year}} </h4>
-    <big> Squad: </big>
+    <ul>
+        <li>Name : {{group.name}} </li>
+        <li>Description : {{group.description}} </li>
+    </ul>
+
+    <h2>Squad</h2>
     <p>
-        <table width="500" bgcolor="black">
+        <table class="table" width="500" bgcolor="black">
             <tr bgcolor="white">
-                <th width="200">Name</th>
-                <th width="200">Team</th>
-                <th width="200">Country</th>
+                <th width="200">Player Name</th>
+                <th width="200">Team Name</th>
+                <th width="200">Nationality</th>
+                <th width="200">Age</th>
                 <th width="200">Position</th>
             </tr>
             {{#each group.players}}
@@ -15,10 +19,21 @@
                 <td> {{this.playerName}} </td>
                 <td> {{this.teamName}} </td> 
                 <td> {{this.nationality}} </td> 
+                <td>{{this.age}}</td>
                 <td> {{this.position}} </td> 
+                <td>
+                    <form action="/site/groups/{{group.id}}/players/{{this.id}}/delete" method="POST">
+                        <input type="submit" value="del">
+                    </form>
+                </td>
             </tr>
             {{/each}}
         </table>
     </p>
 
+    <br>
+    <a href="/site/competitions/{{group.competition.code}}/season/{{group.year}}/teams"> Add Player </a> 
+
+    <br>
+    <a href="/site/groups/{{this.id}}/update" class="btn btn-primary"> Update group</a>
 </section>

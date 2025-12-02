@@ -28,6 +28,7 @@ export default function init(groupsServices) {
       deleteGroup: processRequest(internal_deleteGroup),
       addPlayerToGroup: processRequest(internal_addPlayerToGroup),
       removePlayerFromGroup: processRequest(internal_removePlayerFromGroup),
+      renderHomePage: processRequest(internal_renderHomePage),
       errorHandler: errorHandler
     };
 
@@ -48,11 +49,17 @@ export default function init(groupsServices) {
 
     function errorHandler(err, req, res, next){
       let error = err;
-      //console.log(error)
+      console.log(error)
       if (err instanceof SyntaxError && err.type == "entity.parse.failed") {
         error = errors.INVALID_JSON_PARSER();
       }
       setHttpError(res, error);
+    }
+
+    function internal_renderHomePage(req, res){
+      return new Promise ((resolve, reject) => {
+        res.render("home-view")
+      })
     }
 
     async function internal_getCompetitions(req, res){
@@ -63,9 +70,9 @@ export default function init(groupsServices) {
     async function internal_getTeams(req, res){
       const output = await groupsServices.getTeams(req.params.competitionCode, req.params.season, req.userToken);
       if (output.internalError) return output;
-
+      console.log(output)
       // Success case
-      res.render("tasks-view", {teams: output});
+      res.render("teams-view", {teams: output});
     }
 
     function internal_getAllGroups(req, res){
