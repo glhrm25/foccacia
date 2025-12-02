@@ -147,19 +147,19 @@ paths:
         400:
           $ref: "#/components/responses/400InvalidBody"
 # GROUP FROM NAME:
-  /groups/{groupName}:
+  /groups/{groupId}:
     description: The resource that contains a specified group.
     # GET GROUP
     get:
       tags:
         - Groups
       summary: get the specified user's group
-      description: Get the user's specified BEST XI group by it's name.
+      description: Get the user's specified BEST XI group by it's id.
       operationId: getGroupName
       parameters:
-        - name: groupName
+        - name: groupId
           in: path
-          description: Name of group to be found
+          description: Id of group to be found
           required: true
           schema:
             type: string
@@ -182,9 +182,9 @@ paths:
       description: Updates a group's name and description in the system
       operationId: updateGroup
       parameters:
-        - name: groupName
+        - name: groupId
           in: path
-          description: Name of the group to be updated
+          description: Id of the group to be updated
           required: true
           schema:
             type: string
@@ -211,13 +211,13 @@ paths:
     delete:
       tags:
         - Groups
-      summary: Delete a group by name
-      description: Delete a group by name
+      summary: Delete a group by it's id
+      description: Delete a group by it's id
       operationId: deleteGroup
       parameters:
-        - name: groupName
+        - name: groupId
           in: path
-          description: Name of the group to be deleted
+          description: Id of the group to be deleted
           required: true
           schema:
             type: string
@@ -241,7 +241,7 @@ paths:
           $ref: "#/components/responses/404NotFound"
         400:
           $ref: "#/components/responses/400InvalidParameter"
-  /groups/{groupName}/players:
+  /groups/{groupId}/players:
     # ADD A PLAYER TO GROUP
     post:
         tags:
@@ -250,9 +250,9 @@ paths:
         description: Adds a new player to the system
         operationId: addPlayer
         parameters:
-        - name: groupName
+        - name: groupId
           in: path
-          description: Name of the group to be modified
+          description: Id of the group to be modified
           required: true
           schema:
             type: string
@@ -287,9 +287,9 @@ paths:
       description: Delete a player from a group
       operationId: deletePlayer
       parameters:
-        - name: groupName
+        - name: groupId
           in: path
-          description: Name of the group where the player is
+          description: Id of the group where the player is
           required: true
           schema:
             type: string

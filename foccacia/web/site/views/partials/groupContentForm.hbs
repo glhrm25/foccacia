@@ -1,0 +1,14 @@
+<label for="groupName" class="form-label"> Name: </label>
+<input type="text" id="groupName" class="form-control" name="name" required> 
+
+<label for="groupDescription" class="form-label"> Description: </label>
+<textarea id="groupDescription" class="form-control" name="description" required> </textarea>
+
+<label for="groupCompetition" class="form-label"> Competition: </label>
+<input type="text" id="groupCompetition" class="form-control" name="competition[code]" required> 
+<input type="text" id="groupSeason" class="form-control" name="competition[name]" required> 
+
+<label for="groupSeason" class="form-label"> Year: </label>
+<input type="number" id="groupSeason" class="form-control" name="year" required>
+
+<input type="submit" class="btn btn-primary" value="Submit">

@@ -1,0 +1,25 @@
+<section class="container p-2">
+<h2> Best XI Groups: </h2>
+
+<!-- Show a task in each row of a table -->
+<table class="table text-nowrap">
+    {{#each groups}}
+    <tr>
+        <td> {{this.name}} -  {{this.competition.code}} - {{this.year}} </td> 
+        <td width="5%">
+            <a href="/site/groups/{{this.id}}" class="btn btn-warning"> Edit </a>
+        </td>
+        <td width="5%">
+            <form action="/site/groups/{{this.id}}/delete" method="POST">
+                <input type="submit" value="delete" class="btn btn-danger">
+            </form>
+        </td>
+    </tr>
+    {{/each}}
+</table>
+
+<a href="/site/groups/{{this.id}}" class="btn btn-warning">
+    <button style="border-radius: 5px;"> Add Group </button>
+</a>
+
+</section>

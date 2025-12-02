@@ -1,0 +1,19 @@
+<section class="container p-2">
+<h2> List of Competitions: </h2>
+
+<!-- Show a task in each row of a table -->
+<table class="table text-nowrap">
+    <tr>
+        <th> Name </th> 
+        <th> Code </th>
+        <th> </th>
+        <th> </th>
+    </tr>
+    {{#each competitions}}
+    <tr>
+        <td> {{this.name}} </td>
+        <td> {{this.code}} </td> 
+    </tr>
+    {{/each}}
+</table>
+</section>

@@ -6,6 +6,8 @@ import usersServicesInit from '../services/users-services.js';
 import groupsDataInit from '../data/mock-foccacia-data-mem.js';
 import fapiTeamsData from '../data/fapi-teams-data.js';
 import usersDataInit from '../data/mock-users-data-mem.js';
+import e from "express";
+import { group } from "console";
 
 
 /*
@@ -47,15 +49,14 @@ describe("Testing groups Management API services with mock groups data", () => {
 
     describe("Getting all groups searching by string '3'", () => {
         // Arrange
-        const groupId = "3";
+        const groupId = 1
 
         it("This should return an array with only one group", () => {
             // Act
             const groupsPromise = groupsServices.getAllGroups(userToken, {});
             return groupsPromise.then(groups => {
                 assert.equal(groups.length, 5);
-                const groupName = "Group 1"
-                const groupPromise = groupsServices.getGroup(userToken, groupName);
+                const groupPromise = groupsServices.getGroup(userToken, groupId);
                 return groupPromise.then(group => {
                     assert.deepStrictEqual(groups[0], group)}
                 );
@@ -106,8 +107,8 @@ describe("Testing groups Management API services with mock groups data", () => {
                 userId: 2 
             }
             // Act
-            const groupName = "Group 1"
-            const group = await groupsServices.getGroup(userToken, groupName);
+            const groupId = 1
+            const group = await groupsServices.getGroup(userToken, groupId);
             // Assert
             assert.deepStrictEqual(group, expectedGroup)
         });
@@ -115,16 +116,15 @@ describe("Testing groups Management API services with mock groups data", () => {
         // Case of error
         it("Getting group 2 from user ${userId} should return internal error", async () => {
             // Arrange
-            const idGroup = "2";
-            const groupName = `Group ${idGroup}`
+            const groupId = 2;
             // Act
             try {
                 // An error is expected
-                await groupsServices.getGroup(userToken, groupName);
+                await groupsServices.getGroup(userToken, groupId);
             }
             catch (error){
                 // Assert
-                assert.deepStrictEqual(error, errors.GROUP_NOT_FOUND(groupName));                
+                assert.deepStrictEqual(error, errors.GROUP_NOT_FOUND(groupId));                
             }
         });
     });
@@ -146,36 +146,35 @@ describe("Testing groups Management API services with mock groups data", () => {
             const expectedGroup = Object.assign({id: 11}, newGroup, {players: [], userId: userId});
             // Act
             const addedGroup = await groupsServices.addGroup(userToken, newGroup);
-            const groupGet = await groupsServices.getGroup(userToken, addedGroup.name);
+            const groupGet = await groupsServices.getGroup(userToken, addedGroup.id);
 
             // Assert
             assert.deepStrictEqual(JSON.stringify(addedGroup), JSON.stringify(expectedGroup), "addGroup should return a group of id 11");
-            assert.deepStrictEqual(groupGet, addedGroup, "getGroup should return the added group");
+            assert.deepStrictEqual(JSON.stringify(groupGet), JSON.stringify(addedGroup), "getGroup should return the added group");
         });
     });
 
     describe("Deleting a group", () => {
         // Arrange
         const deleteIdGroup = 7;
-        const deleteGroupName = `Group ${deleteIdGroup}`
 
-        it(`Deleting group ${deleteGroupName} for user ${userId}`, async () => {
+        it(`Deleting group ${deleteIdGroup} for user ${userId}`, async () => {
             // Arrange
             // Act
-            const deleteGroup = await groupsServices.deleteGroup(userToken, deleteGroupName);
+            const deleteGroup = await groupsServices.deleteGroup(userToken, deleteIdGroup);
             // Assert
             assert.deepStrictEqual(deleteGroup.id, deleteIdGroup, `Delete id task should be ${deleteIdGroup}`);
         });
 
-        it(`Deleting group ${deleteGroupName} again for user ${userId} should return an internal error`, async () => {
+        it(`Deleting group ${deleteIdGroup} again for user ${userId} should return an internal error`, async () => {
             // Arrange
             // Act
             try {
-                await groupsServices.getGroup(userToken, deleteGroupName);
+                await groupsServices.getGroup(userToken, deleteIdGroup);
             }
             catch (error){
-                assert.deepStrictEqual(error, errors.GROUP_NOT_FOUND(deleteGroupName), 
-                    `After delete, getting group ${deleteGroupName} should return internal error`);
+                assert.deepStrictEqual(error, errors.GROUP_NOT_FOUND(deleteIdGroup), 
+                    `After delete, getting group ${deleteIdGroup} should return internal error`);
             }
         });
     });
@@ -183,17 +182,16 @@ describe("Testing groups Management API services with mock groups data", () => {
     describe("Updating a group", () => {
         // Arrange
         const updatedIdGroup = 1;
-        const updatedGroupName = `Group ${updatedIdGroup}`
         const newGroup = {
             name: `An updated task`,
             description: `This is the description fo the updated task.` 
         }
 
-        it(`Updating task ${updatedGroupName} for user ${userId}`, async () => {
+        it(`Updating task ${updatedIdGroup} for user ${userId}`, async () => {
             // Arrange
             const expectedGroup = Object.assign({id: updatedIdGroup}, newGroup, {competition: { code: 'MCP', name: 'MOCK COMPETITION' }, year: 2025, players: [], userId: userId});
             // Act
-            const updatedGroup = await groupsServices.updateGroup(userToken, updatedGroupName, newGroup);
+            const updatedGroup = await groupsServices.updateGroup(userToken, updatedIdGroup, newGroup);
             // Assert
             assert.deepStrictEqual(updatedGroup, expectedGroup);
         });

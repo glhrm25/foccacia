@@ -1,0 +1,24 @@
+<section class="container p-2">
+    <h2> {{group.name}} </h2>
+    <h4> {{group.competition.code}} - {{group.year}} </h4>
+    <big> Squad: </big>
+    <p>
+        <table width="500" bgcolor="black">
+            <tr bgcolor="white">
+                <th width="200">Name</th>
+                <th width="200">Team</th>
+                <th width="200">Country</th>
+                <th width="200">Position</th>
+            </tr>
+            {{#each group.players}}
+            <tr bgcolor="white" align="center">
+                <td> {{this.playerName}} </td>
+                <td> {{this.teamName}} </td> 
+                <td> {{this.nationality}} </td> 
+                <td> {{this.position}} </td> 
+            </tr>
+            {{/each}}
+        </table>
+    </p>
+
+</section>

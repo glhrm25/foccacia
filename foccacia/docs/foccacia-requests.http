@@ -1,5 +1,5 @@
 ### User 2 (testing app)
-@tokenUser2 = b0506867-77c3-4142-9437-1f627deebd67
+@tokenUser2 = 703754c2-83a2-4d91-ae7a-fe10af27c512
 
 ### Insert a Group
 POST http://localhost:8000/groups HTTP/2
@@ -17,7 +17,7 @@ Authorization: Bearer {{tokenUser2}}
 }
 
 ### Delete group pt group
-DELETE http://localhost:8000/groups/PT%20Group HTTP/2
+DELETE http://localhost:8000/groups/4 HTTP/2
 Authorization: Bearer {{tokenUser2}}
 
 ### Insert a Group
@@ -83,11 +83,11 @@ Authorization: Bearer {{tokenUser2}}
 
 ### Get group PT_GROUP
 
-GET http://localhost:8000/groups/PT%20Group HTTP/2
+GET http://localhost:8000/groups/1 HTTP/2
 Authorization: Bearer {{tokenUser2}}
 
 ### Update group PT_GROUP
-PUT http://localhost:8000/groups/PT%20Group HTTP/2
+PUT http://localhost:8000/groups/4 HTTP/2
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -107,7 +107,7 @@ DELETE http://localhost:8000/groups/group1 HTTP/2
 Authorization: Bearer {{tokenUser2}}
 
 ### Add player to group
-POST http://localhost:8000/groups/PL%20Group/players
+POST http://localhost:8000/groups/1/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -117,21 +117,21 @@ Authorization: Bearer {{tokenUser2}}
 
 ### Get group PL_GROUP
 
-GET http://localhost:8000/groups/PL%20Group HTTP/2
+GET http://localhost:8000/groups/1 HTTP/2
 Authorization: Bearer {{tokenUser2}}
 
 ### Remove player from group
-DELETE http://localhost:8000/groups/PL%20Group/players/123
+DELETE http://localhost:8000/groups/1/players/123
 Authorization: Bearer {{tokenUser2}}
 
 ### Get group PL_GROUP
 
-GET http://localhost:8000/groups/PL%20Group HTTP/2
+GET http://localhost:8000/groups/1 HTTP/2
 Authorization: Bearer {{tokenUser2}}
 
 ### ADD 12 PLAYERS TO A GROUP AND SEE WHAT HAPPENS
 ### 1/12 Add Player
-POST http://localhost:8000/groups/PL%20Group/players
+POST http://localhost:8000/groups/1/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -167,7 +167,7 @@ Authorization: Bearer {{tokenUser2}}
 }
 
 ### 5/12 Add Player
-POST http://localhost:8000/groups/PL%20Group/players
+POST http://localhost:8000/groups/1/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -176,7 +176,7 @@ Authorization: Bearer {{tokenUser2}}
 }
 
 ### 6/12 Add Player
-POST http://localhost:8000/groups/PL%20Group/players
+POST http://localhost:8000/groups/1/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -185,7 +185,7 @@ Authorization: Bearer {{tokenUser2}}
 }
 
 ### 7/12 Add Player
-POST http://localhost:8000/groups/PL%20Group/players
+POST http://localhost:8000/groups/1/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -194,7 +194,7 @@ Authorization: Bearer {{tokenUser2}}
 }
 
 ### 8/12 Add Player
-POST http://localhost:8000/groups/PL%20Group/players
+POST http://localhost:8000/groups/1/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -203,7 +203,7 @@ Authorization: Bearer {{tokenUser2}}
 }
 
 ### 9/12 Add Player
-POST http://localhost:8000/groups/PL%20Group/players
+POST http://localhost:8000/groups/1/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -212,7 +212,7 @@ Authorization: Bearer {{tokenUser2}}
 }
 
 ### 10/12 Add Player
-POST http://localhost:8000/groups/PL%20Group/players
+POST http://localhost:8000/groups/1/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -221,7 +221,7 @@ Authorization: Bearer {{tokenUser2}}
 }
 
 ### 11/12 Add Player
-POST http://localhost:8000/groups/PL%20Group/players
+POST http://localhost:8000/groups/1/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -231,7 +231,7 @@ Authorization: Bearer {{tokenUser2}}
 
 ### 12/12 Add Player
 ### ERRO AO ADICIONAR
-POST http://localhost:8000/groups/PL%20Group/players
+POST http://localhost:8000/groups/1/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
@@ -241,7 +241,7 @@ Authorization: Bearer {{tokenUser2}}
 
 
 ### Player inexistente
-POST http://localhost:8000/groups/PL%20Group/players
+POST http://localhost:8000/groups/1/players
 Content-Type: application/json
 Authorization: Bearer {{tokenUser2}}
 
