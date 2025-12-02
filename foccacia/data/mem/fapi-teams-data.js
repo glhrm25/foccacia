@@ -34,6 +34,7 @@ export default function init(){
         return await getObjApi(`competitions/${competitionCode}/teams?season=${season}`)
     }
 
+    // FIX BUG OF TRYING TO ACCESS API WITHOUT THE TOKEN
     function getPlayer(playerId, year){
      return new Promise((resolve, reject) => {
         const player = PLAYERS_CACHE.find(pl => pl.playerId == playerId)
