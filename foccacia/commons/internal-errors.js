@@ -15,7 +15,8 @@ export const INTERNAL_ERROR_CODES = {
     PLAYER_ALREADY_EXISTS: 14,
     PLAYER_NOT_FOUND: 15,
     SQUAD_IS_FULL: 16,
-    INVALID_JSON_PARSER: 17
+    INVALID_JSON_PARSER: 17,
+    RESOURCE_NOT_AVAILABLE: 18
 };
 
 // Constructor function for an Error
@@ -75,5 +76,8 @@ export const errors = {
     },
     INVALID_JSON_PARSER: () => {
         return new Error(INTERNAL_ERROR_CODES.INVALID_JSON_PARSER, `Invalid body. Cannot parser the body.`);
-    }
+    },
+    RESOURCE_NOT_AVAILABLE: () => {
+        return new Error(INTERNAL_ERROR_CODES.RESOURCE_NOT_AVAILABLE, `The resource you're looking for is not available.`);
+    },
 }

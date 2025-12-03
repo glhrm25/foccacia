@@ -31,12 +31,13 @@ export function errorToHttp(e) {
         case INTERNAL_ERROR_CODES.PLAYER_ALREADY_EXISTS: return new HttpResponseError(400, e);
         case INTERNAL_ERROR_CODES.GROUP_ALREADY_EXISTS: return new HttpResponseError(400, e);
         case INTERNAL_ERROR_CODES.MISSING_PARAMETER: return new HttpResponseError(400, e);
+        case INTERNAL_ERROR_CODES.RESOURCE_NOT_AVAILABLE: return new HttpResponseError(400, e);
         case INTERNAL_ERROR_CODES.MISSING_TOKEN: return new HttpResponseError(401, e)
         case INTERNAL_ERROR_CODES.NOT_AUTHORIZED: return new HttpResponseError(401, e);
         case INTERNAL_ERROR_CODES.SQUAD_IS_FULL: return new HttpResponseError(400, e);
         default: return new HttpResponseError(500, {
                 internalError: INTERNAL_ERROR_CODES.SERVER_ERROR,
-                description: "Internal server error. Contact your professor!"
+                description: "UPS! Something went wrong. Contact email A52673@alunos.isel.pt"
             });
     }
 }

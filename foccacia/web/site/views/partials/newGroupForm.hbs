@@ -1,6 +1,21 @@
 <section class="container p-2 bg-light shadow border">
-    <h3> New group: </h3>
+    <h3> New group:</h3>
     <form action="/site/groups" method="POST">
-        {{> groupContentForm}}
+        <label for="groupName" class="form-label"> Name: </label>
+        <input type="text" id="groupName" class="form-control" name="name" required> 
+
+        <br>
+        <label for="groupDescription" class="form-label"> Description: </label>
+        <textarea id="groupDescription" class="form-control" name="description" required> </textarea>
+
+        <br>
+        <label for="groupSeason" class="form-label"> Year: </label>
+        <input type="number" id="groupSeason" class="form-control" min = "2017" max= "2025" name="year" required>
+        
+        <input type="hidden" name="competition[code]" value="{{this.code}}">
+        <input type="hidden" name="competition[name]" value="{{this.name}}">
+
+        <br>
+        <input type="submit" class="btn btn-primary" value="Submit">
     </form>
 </section>

@@ -1,7 +1,7 @@
 <section>
-    <h1>Group Best Champions League 2023 {{this.competition}}</h1>
+    <h1>Group Best Champions League 2023 {{group.competition}}</h1>
     {{#each teams}}
-    <p><a href="#{{this.name}}">{{this.name}}</a></p>
+    <a href="#{{this.name}}">{{this.name}}</a>
     {{/each}}
 
     <h1>List of players</h1>
@@ -20,10 +20,10 @@
                     <td>{{this.name}}</td>
                     <td>{{this.position}}</td>
                     <td>
-                        <form action="/site/groups/1/players" method="POST">
+                        <form action="/site/groups/{{group.id}}/players" method="POST">
                             <input type="hidden" name="playerId" value="1">
                             <input type="hidden" name="teamId" value="1">
-                            <input type="submit" value="add">
+                            <input type="submit" value="add", class="btn btn-primary">
                         </form>
                     </td>
                 </tr>

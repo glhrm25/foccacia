@@ -168,9 +168,21 @@ export default function init(groupsData, footballData, usersServices) {
     }
 
     // Output: All the available competitions.
-    function getCompetitions() {
+    function getCompetitions(query) {
         return footballData.getCompetitions().then(output => {
-            return output.competitions.map(comp => ({ name: comp.name, code: comp.code }))
+            const comps = output.competitions.map(comp => ({ name: comp.name, code: comp.code }))
+            const queryLen = Object.keys(query).length;
+            if (queryLen == 0) { // There is no query string
+                return comps;
+            }
+            if (queryLen == 1 && "competition" in query) {
+                const querySearch = query["competition"];
+                const searchedGroups = footballData.searchCompetitionByCode(comps, querySearch)
+                return(searchedGroups);
+            }
+            else {
+                return Promise.reject(errors.INVALID_QUERY());
+            }
         })
     }
 
@@ -178,6 +190,7 @@ export default function init(groupsData, footballData, usersServices) {
     // Output: All teams that participated on the specified competition.
     function getTeams(competitionCode, season) {
         return footballData.getTeams(competitionCode, season).then(output => {
+            console.log(output)
             return output.teams.map(t => (
                 {
                     name: t.name, 

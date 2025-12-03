@@ -29,6 +29,8 @@ export default function init(groupsServices) {
       addPlayerToGroup: processRequest(internal_addPlayerToGroup),
       removePlayerFromGroup: processRequest(internal_removePlayerFromGroup),
       renderHomePage: processRequest(internal_renderHomePage),
+      renderUpdatePage: processRequest(internal_renderUpdatePage),
+      renderGroupFormPage: processRequest(internal_renderGroupFormPage),
       errorHandler: errorHandler
     };
 
@@ -62,15 +64,27 @@ export default function init(groupsServices) {
       })
     }
 
+    function internal_renderUpdatePage(req, res){
+      return groupsServices.getGroup(req.userToken, req.params.groupId).then(group => {
+        res.render("update-view", {group})
+      })
+    }
+
+    function internal_renderGroupFormPage(req, res) {
+      return groupsServices.getCompetitions(req.query).then(competition => {
+        res.render("groupForm-view", competition[0]) // "competition" is always an array with only one element 
+      })
+    }
+
     async function internal_getCompetitions(req, res){
-      return groupsServices.getCompetitions(req.userToken)
+      return groupsServices.getCompetitions(req.query)
           .then( competitions => res.render("competitions-view", {competitions}) )
     }
 
     async function internal_getTeams(req, res){
       const output = await groupsServices.getTeams(req.params.competitionCode, req.params.season, req.userToken);
       if (output.internalError) return output;
-      console.log(output)
+      //console.log(output)
       // Success case
       res.render("teams-view", {teams: output});
     }

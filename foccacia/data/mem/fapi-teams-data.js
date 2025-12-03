@@ -11,6 +11,7 @@ export default function init(){
     // Interface
     return {
         getCompetitions,
+        searchCompetitionByCode,
         getTeams,
         getPlayer
     };
@@ -18,7 +19,12 @@ export default function init(){
     async function getObjApi(options){
         try {
             // Returns the api's response if possible
-            return (await fetch(`https://api.football-data.org/v4/${options}`, requestOptions)).json()
+            return (await fetch(`https://api.football-data.org/v4/${options}`, requestOptions)).json().then(res => {
+                if (res.errorCode) {
+                    throw errors.RESOURCE_NOT_AVAILABLE()
+                }
+                else return res
+            })
         }
         catch(error) {
             // Else, shows error
@@ -28,6 +34,16 @@ export default function init(){
     
     async function getCompetitions(){
         return await getObjApi("competitions/")
+    }
+
+    function searchCompetitionByCode(comps, querySearch){
+        return new Promise((resolve, reject) => { 
+        if (! querySearch) resolve(comps)
+        const searchedComps = comps.filter(
+          comp => comp.code == querySearch
+        )
+        resolve(searchedComps);
+      });
     }
   
     async function getTeams(competitionCode, season){

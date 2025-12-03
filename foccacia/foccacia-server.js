@@ -109,6 +109,7 @@ if(groupsAPI && usersAPI && groupsSite) {
   // create group
   app.post("/groups", groupsAPI.addGroup);
   app.post("/site/groups", groupsSite.addGroup);
+  app.get("/site/groupForm", groupsSite.renderGroupFormPage)
 
   // delete group by id
   app.delete("/groups/:groupId", groupsAPI.deleteGroup); // ? À FRENTE DO GROUPID ?????
@@ -117,6 +118,7 @@ if(groupsAPI && usersAPI && groupsSite) {
   // update group by name
   app.put("/groups/:groupId", groupsAPI.updateGroup);
   app.post("/site/groups/:groupId/update", groupsSite.updateGroup);
+  app.get("/site/groups/:groupId/updateForm", groupsSite.renderUpdatePage)
 
   // add players to group
   app.post("/groups/:groupId/players", groupsAPI.addPlayerToGroup)
