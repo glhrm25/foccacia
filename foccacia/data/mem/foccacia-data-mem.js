@@ -43,14 +43,14 @@ export default function init() {
     function searchGroups(groups, querySearch) {
       return new Promise((resolve, reject) => { 
         if (! querySearch) resolve(groups)
-        const searchedTasks = groups.filter(
+        const searchedGroups = groups.filter(
           group => (group.name.includes(querySearch) || 
                     group.description.includes(querySearch)
                     //group.competition.includes(querySearch) || 
                     //group.year.includes(querySearch)
                   )
         )
-        resolve(searchedTasks);
+        resolve(searchedGroups);
       });
     }
   

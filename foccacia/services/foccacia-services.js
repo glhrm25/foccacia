@@ -210,9 +210,9 @@ function isValidGroup(group) {
         (typeof group.name === "string") && (group.name.trim() !== "") &&
         (typeof group.description === "string") && (group.description.trim() !== "") &&
         group.competition && (typeof group.competition === "object") &&
-        (typeof group.competition.code === "string") && (group.competition.code.trim() !== "") &&
-        (typeof group.competition.name === "string") && (group.competition.name.trim() !== "") &&
-        group.year && (typeof group.year === "string") && (!isNaN(Number(group.year)))
+        (group.competition.code.trim() !== "") &&
+        (group.competition.name.trim() !== "") &&
+        group.year && (!isNaN(Number(group.year)))
     )
 }
   
