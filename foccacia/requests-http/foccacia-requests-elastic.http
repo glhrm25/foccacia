@@ -59,7 +59,7 @@ DELETE http://localhost:8000/groups/{{group-to-delete}}
 Authorization: Bearer {{tokenUser1}}
 
 ### Get group Ldhj-ZoB8yi0MJZNxBxi -> Add a group first and then paste the id
-GET http://localhost:8000/groups/Ldhj-ZoB8yi0MJZNxBxi
+GET http://localhost:8000/groups/R77K-poBW19SW0hghdvw
 Authorization: Bearer {{tokenUser1}}
 
 ### Update group Ldhj-ZoB8yi0MJZNxBxi

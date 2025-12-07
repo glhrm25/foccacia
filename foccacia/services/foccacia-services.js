@@ -165,7 +165,7 @@ export default function init(groupsData, footballData, usersServices) {
     function getCompetitions(query) {
         return footballData.getCompetitions().then(output => {
             const comps = output.competitions.map(comp => ({ name: comp.name, code: comp.code }))
-            const queryLen = Object.keys(query).length;
+            const queryLen = Object.keys(query).length
             if (queryLen == 0) { // There is no query string
                 return comps;
             }
@@ -198,15 +198,18 @@ export default function init(groupsData, footballData, usersServices) {
 //  OTHER AUXILIAR FUNCTIONS:
 
 function isValidGroup(group) {
-    return (
-        group && 
-        (typeof group.name === "string") && (group.name.trim() !== "") &&
-        (typeof group.description === "string") && (group.description.trim() !== "") &&
-        group.competition && (typeof group.competition === "object") &&
-        (group.competition.code.trim() !== "") &&
-        (group.competition.name.trim() !== "") &&
-        group.year && (!isNaN(Number(group.year)))
-    )
+    if (("name" in group) && ("description" in group) && ("competition" in group) && ("year" in group)) {
+        const name = group.name.trim() // remove whitespaces
+        const description = group.description.trim()
+        const competition = group.competition
+        const year = group.year
+        if (name.length > 0 && description.length > 0 &&
+            ("code" in competition) && competition.code.trim().length > 0 &&
+            ("name" in competition) && competition.name.trim().length > 0 &&
+            !isNaN(Number(year))
+        ) return true
+    }
+    return false
 }
   
 function isValidUpdate(update){

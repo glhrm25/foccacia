@@ -1,0 +1,11 @@
+@tokenUser1 = 44cec37a-dded-4bd7-8316-af42609daa3e
+
+### Get competitions
+
+GET http://localhost:8000/competitions HTTP/2
+Authorization: Bearer {{tokenUser1}}
+
+### Get teams
+
+GET http://localhost:8000/competitions/PPL/season/2023/teams HTTP/2
+Authorization: Bearer {{tokenUser1}}

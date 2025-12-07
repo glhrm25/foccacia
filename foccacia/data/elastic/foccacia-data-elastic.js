@@ -1,4 +1,3 @@
-import { errors } from "../../commons/internal-errors.js";
 import { fetchElastic } from './fetch-elastic.js';
 
 // FUNCTIONS (FOCCACIA API with Elasticsearch Database):
@@ -33,21 +32,6 @@ export default function init() {
         deleteGroup,
         addPlayerToGroup,
         removePlayerFromGroup
-    };
-
-    function isValidGroup(group) {
-        if (("name" in group) && ("description" in group) && ("competition" in group) && ("year" in group)) {
-            const name = group.name.trim() // remove whitespaces
-            const description = group.description.trim()
-            const competition = group.competition
-            const year = group.year
-            if (name.length > 0 && description.length > 0 &&
-                ("code" in competition) && competition.code.trim().length > 0 &&
-                ("name" in competition) && competition.name.trim().length > 0 &&
-                !isNaN(Number(year))
-            ) return true
-        }
-        return false
     }
 
     function searchGroups(groups, querySearch) {

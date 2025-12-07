@@ -56,9 +56,8 @@ export default function init(groupsServices) {
     }
 
     async function internal_getCompetitions(req, res){
-      const output = await groupsServices.getCompetitions(req.userToken);
-      if (output.internalError) return output;
-
+      const output = await groupsServices.getCompetitions(req.query);
+      if (output.internalError) return output
       // Success case
       res.json(output);
     }

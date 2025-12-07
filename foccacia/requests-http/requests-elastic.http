@@ -16,6 +16,11 @@ GET /groups/_search
 Host: {{hostname}}:{{port}}
 Authorization: ApiKey {{token}}
 
+### List documents from /competitions:
+GET /competitions/_search
+Host: {{hostname}}:{{port}}
+Authorization: ApiKey {{token}}
+
 ### List documents from /users:
 GET /users/_search
 Host: {{hostname}}:{{port}}
@@ -23,6 +28,11 @@ Authorization: ApiKey {{token}}
 
 ### Remove groups index:
 DELETE /groups
+Host: {{hostname}}:{{port}}
+Authorization: ApiKey {{token}}
+
+### Remove competitions index:
+DELETE /competitions
 Host: {{hostname}}:{{port}}
 Authorization: ApiKey {{token}}
 

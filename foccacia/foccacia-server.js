@@ -17,10 +17,11 @@ import usersServicesInit from './services/users-services.js';
 import groupsDataInit from './data/elastic/foccacia-data-elastic.js'
 //import groupsDataInit from './data/mem/foccacia-data-mem.js';
 //import groupsDataInit from './data/mock/mock-foccacia-data-mem.js';
-//import usersDataInit from './data/elastic/users-data-elastic.js';
-import usersDataInit from './data/mock/mock-users-data-mem.js';
+import usersDataInit from './data/elastic/users-data-elastic.js';
+//import usersDataInit from './data/mock/mock-users-data-mem.js';
 //import usersDataInit from './data/mem/users-data-mem.js';
-import fapiTeamsData from './data/mem/fapi-teams-data.js';
+import fapiTeamsData from './data/elastic/fapi-teams-elastic.js'
+//import fapiTeamsData from './data/mem/fapi-teams-data.js';
 
 const PORT = 8000;  // Port number for the tests
 
