@@ -1,0 +1,32 @@
+@hostname=localhost
+@port=9200
+@token=44cec37a-dded-4bd7-8316-af42609daa3e
+
+### Get basic information:
+GET http://{{hostname}}:{{port}}
+Authorization: ApiKey {{token}}
+
+### List indexes:
+GET /*
+Host: {{hostname}}:{{port}}
+Authorization: ApiKey {{token}}
+
+### List documents from /groups:
+GET /groups/_search
+Host: {{hostname}}:{{port}}
+Authorization: ApiKey {{token}}
+
+### List documents from /users:
+GET /users/_search
+Host: {{hostname}}:{{port}}
+Authorization: ApiKey {{token}}
+
+### Remove groups index:
+DELETE /groups
+Host: {{hostname}}:{{port}}
+Authorization: ApiKey {{token}}
+
+### Remove Users index:
+DELETE /users
+Host: {{hostname}}:{{port}}
+Authorization: ApiKey {{token}}

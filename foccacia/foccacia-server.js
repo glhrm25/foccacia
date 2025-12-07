@@ -14,9 +14,11 @@ import usersApiInit from './web/api/users-web-api.js';
 import groupsServicesInit from './services/foccacia-services.js';
 import usersServicesInit from './services/users-services.js';
 
-import usersDataInit from './data/mock/mock-users-data-mem.js';
+import groupsDataInit from './data/elastic/foccacia-data-elastic.js'
 //import groupsDataInit from './data/mem/foccacia-data-mem.js';
-import groupsDataInit from './data/mock/mock-foccacia-data-mem.js';
+//import groupsDataInit from './data/mock/mock-foccacia-data-mem.js';
+//import usersDataInit from './data/elastic/users-data-elastic.js';
+import usersDataInit from './data/mock/mock-users-data-mem.js';
 //import usersDataInit from './data/mem/users-data-mem.js';
 import fapiTeamsData from './data/mem/fapi-teams-data.js';
 

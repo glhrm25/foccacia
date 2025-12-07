@@ -1,12 +1,14 @@
 import crypto from 'node:crypto';
-//import { errors } from '../../commons/internal-errors.mjs';
-import { fetchElastic } from './fetch-elastic.mjs';
+//import { errors } from '../../commons/internal-errors.js';
+import { fetchElastic } from './fetch-elastic.js';
 
 // FUNCTIONS (API users with Elasticsearch database):
 
-function User(username){
-  this.name = username;
-  this.token = crypto.randomUUID();
+class User {
+  constructor(username) {
+    this.name = username;
+    this.token = crypto.randomUUID();
+  }
 }
 
 function joinUserId(user, userId) {

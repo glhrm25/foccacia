@@ -1,0 +1,293 @@
+### First, add a user in Elastic database and put the token here
+# Use users-requests-elastic.http
+#@token = token-returned
+@tokenUser1 = 44cec37a-dded-4bd7-8316-af42609daa3e
+@tokenUser2 = c8077790-e9d1-4dd5-aba1-f39e82808b90
+
+### Insert a group
+POST http://localhost:8000/groups
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+{
+    "name": "PT Group",
+    "description": "Best Portuguese League players",
+    "competition": {
+        "code": "PT",
+        "name": "Liga Portugal"
+    },
+    "year": 2024
+}
+
+### Insert another group
+POST http://localhost:8000/groups
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+{
+    "name": "PL Group",
+    "description": "Best Premier League players",
+    "competition": {
+        "code": "PL",
+        "name": "Premier League"
+    },
+    "year": 2024
+}
+
+### Insert another group
+POST http://localhost:8000/groups
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+{
+    "name": "Test Group 3",
+    "description": "Test description",
+    "competition": {
+        "code": "UCL",
+        "name": "Uefa Champions League"
+    },
+    "year": 2025
+}
+
+### Get all groups
+GET http://localhost:8000/groups
+Authorization: Bearer {{tokenUser1}}
+
+### Delete group #get-id-of-a-group
+@group-to-delete = LNhe-ZoB8yi0MJZNqRzK
+DELETE http://localhost:8000/groups/{{group-to-delete}}
+Authorization: Bearer {{tokenUser1}}
+
+### Get group Ldhj-ZoB8yi0MJZNxBxi -> Add a group first and then paste the id
+GET http://localhost:8000/groups/Ldhj-ZoB8yi0MJZNxBxi
+Authorization: Bearer {{tokenUser1}}
+
+### Update group Ldhj-ZoB8yi0MJZNxBxi
+PUT http://localhost:8000/groups/Ldhj-ZoB8yi0MJZNxBxi
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+{
+    "name": "update test name",
+    "description": "update test description"
+}
+
+### Get group Lthl-ZoB8yi0MJZN8BxS
+GET http://localhost:8000/groups/Lthl-ZoB8yi0MJZN8BxS
+Authorization: Bearer {{tokenUser1}}
+
+### Get all groups (again)
+GET http://localhost:8000/groups
+Authorization: Bearer {{tokenUser1}}
+
+### Get groups with search
+GET http://localhost:8000/groups?search=test
+Authorization: Bearer {{tokenUser1}}
+
+### Insert a group for user 2
+POST http://localhost:8000/groups
+Content-Type: application/json
+Authorization: Bearer {{tokenUser2}}
+
+{
+    "name": "Test User 2",
+    "description": "Test User 2 description",
+    "competition": {
+        "code": "UCL",
+        "name": "Uefa Champions League"
+    },
+    "year": 2025
+}
+
+### Get all groups for user 1
+GET http://localhost:8000/groups
+Authorization: Bearer {{tokenUser1}}
+
+
+### PLAYER MANAGEMENT
+
+### Add player to group
+@group_id_user1=NtiL-ZoB8yi0MJZNRhzY
+
+POST http://localhost:8000/groups/{{group_id_user1}}/players
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+{
+  "playerId": "44"
+}
+
+### Delete a player from a group
+DELETE http://localhost:8000/groups/{{group_id_user1}}/players/44
+Authorization: Bearer {{tokenUser1}}
+
+### GET ALL ERRORS
+@group-user1 = 12ad2poB4SbxAyFg6eMS
+@group-user2 = 2Gaf2poB4SbxAyFg_-OU
+
+### Get groups with empty token (Missing token)
+GET http://localhost:8000/groups
+Authorization: Bearer
+
+### Get groups with invalid token (User not found ???)
+GET http://localhost:8000/groups
+Authorization: Bearer 123
+
+### Get groups with wrong query string (Invalid query)
+GET http://localhost:8000/groups?filter=test
+Authorization: Bearer {{tokenUser1}}
+
+### POST ERRORS
+
+### Insert a group without token (Missing token)
+POST http://localhost:8000/groups
+Content-Type: application/json
+
+{
+    "name": "Test Group",
+    "description": "Test description",
+    "competition": {
+        "code": "UCL",
+        "name": "Uefa Champions League"
+    },
+    "year": 2025
+}
+
+### Insert a group with invalid token
+POST http://localhost:8000/groups
+Content-Type: application/json
+Authorization: Bearer 123
+
+{
+    "name": "Test Group",
+    "description": "Test description",
+    "competition": {
+        "code": "UCL",
+        "name": "Uefa Champions League"
+    },
+    "year": 2025
+}
+
+### Insert a group with invalid body (Invalid group)
+POST http://localhost:8000/groups
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+{
+    "name": "Invalid group test",
+    "description": "Invalid group test"
+}
+
+### Insert a group with bad Json (bad parser) // FIX ????s
+POST http://localhost:8000/groups
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+"title": "Study HTTP",
+"description": "Read the documentation."
+
+### GET ID ERRORS
+
+### Get groups without token (Missing token)
+GET http://localhost:8000/groups/{{group-user1}}
+
+### Get groups with invalid token
+GET http://localhost:8000/groups/{{group-user1}}
+Authorization: Bearer 123
+
+### Get group with inexistent id (Group not found)
+GET http://localhost:8000/groups/100
+Authorization: Bearer {{tokenUser1}}
+
+### DELETE ID ERRORS
+
+### Delete groups without a token (Missing token)
+DELETE http://localhost:8000/groups/{{group-user1}}
+
+### Delete group with invalid token
+DELETE http://localhost:8000/groups/{{group-user1}}
+Authorization: Bearer 123
+
+### Delete group with inexistent id (Group not found)
+DELETE http://localhost:8000/groups/10
+Authorization: Bearer {{tokenUser1}}
+
+### Delete group from another user // FIX ????
+DELETE http://localhost:8000/groups/{{group-user2}}
+Authorization: Bearer {{tokenUser1}}
+
+### Delete groups with missing parameter // FIX ????
+DELETE http://localhost:8000/groups
+Authorization: Bearer {{tokenUser1}}
+
+### PUT ID ERRORS
+
+### Replace group without a token (Missing token)
+PUT http://localhost:8000/groups/{{group-user1}}
+Content-Type: application/json
+
+{
+    "name": "Relax",
+    "description": "Go chill..."
+}
+
+### Replace group with invalid token
+PUT http://localhost:8000/groups/1{{group-user1}}
+Content-Type: application/json
+Authorization: Bearer 123
+
+{
+    "name": "Relax",
+    "description": "Go chill..."
+}
+
+### Replace group with inexistent id (but valid)
+PUT http://localhost:8000/groups/{{group-user2}}
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+{
+    "name": "Relax",
+    "description": "Go chill..."
+}
+
+
+### Replace group with invalid id
+PUT http://localhost:8000/groups/a
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+{
+    "name": "Relax",
+    "description": "Go chill..."
+}
+
+### Replace group with invalid body
+PUT http://localhost:8000/groups/{{group-user1}}
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+{
+    "name": "Do the assignment 2"
+}
+
+### Replace group with invalid id (empty)
+PUT http://localhost:8000/groups
+Content-Type: application/json
+Authorization: Bearer {{tokenUser1}}
+
+{
+    "name": "Relax",
+    "description": "Go chill..."
+}
+
+
+
+### Final get all tasks to verify if change something
+### User 1
+GET http://localhost:8000/groups
+Authorization: Bearer {{tokenUser1}}
+
+### User 2
+GET http://localhost:8000/groups
+Authorization: Bearer {{tokenUser2}}

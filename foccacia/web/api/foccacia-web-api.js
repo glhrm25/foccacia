@@ -48,6 +48,7 @@ export default function init(groupsServices) {
 
     function errorHandler(err, req, res, next){
       let error = err;
+      console.log(error)
       if (err instanceof SyntaxError && err.type == "entity.parse.failed") {
         error = errors.INVALID_JSON_PARSER();
       }

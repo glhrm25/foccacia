@@ -29,6 +29,6 @@ export default function init(userData){
 
   // Auxiliary function: get userId by token
   function getUserId(token){
-    return userData.getUserId(token);
+    return userData.getUserIdByToken(token);
   }
 }

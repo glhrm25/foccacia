@@ -28,8 +28,6 @@ export default function init(groupsData, footballData, usersServices) {
 
     // Input: a query (object) (or an empty object {}) and a user token (String). -> ADICIONAR AS QUERYS ???
     // Output: an array of groups or an internal error object.
-
-    // BUG SHOWING PLAYERS ON THE GROUPS (PLAYERS ADDED AFTER A GET GROUP REQUEST DONT HAVE ALL INFORMATION)
     function getAllGroups(userToken, query){
         const userIdPromise = usersServices.getUserId(userToken)
         const groupsPromise = userIdPromise.then(
@@ -64,8 +62,7 @@ export default function init(groupsData, footballData, usersServices) {
             // CHECK IF GROUP ALREADY EXISTS
             const groupPromise = groupsData.getGroup(id, newGroup.name)
             return groupPromise.then(group => {
-                if (group)  return Promise.reject(errors.GROUP_ALREADY_EXISTS(newGroup.name))
-                
+                if (group) return Promise.reject(errors.GROUP_ALREADY_EXISTS(newGroup.name))
                 return groupsData.addGroup(id, newGroup)
             })
         })
@@ -74,9 +71,6 @@ export default function init(groupsData, footballData, usersServices) {
     // Input: a groupName (String) and a userToken (String).
     // Output: a group or a internal error object.
     function getGroup(userToken, groupId){
-        if (!Number.isInteger(Number(groupId)))
-            return Promise.reject(errors.INVALID_PARAMETER(groupId))
-
         const userId = usersServices.getUserId(userToken)
         return userId.then(id => {
             if (!id) return Promise.reject(errors.USER_NOT_FOUND())
@@ -190,7 +184,6 @@ export default function init(groupsData, footballData, usersServices) {
     // Output: All teams that participated on the specified competition.
     function getTeams(competitionCode, season) {
         return footballData.getTeams(competitionCode, season).then(output => {
-            console.log(output)
             return output.teams.map(t => (
                 {
                     name: t.name, 

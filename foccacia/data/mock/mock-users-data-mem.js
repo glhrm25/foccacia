@@ -21,9 +21,9 @@ export default function init(){
 
   return {
     addUser,
-    getUserId,
+    getUserIdByToken,
     getUserIdByName
-  }
+  };
 
   function nextId(){
     return(currentId++);
@@ -41,9 +41,11 @@ export default function init(){
     });
   }
 
-  function getUserId(token){
+  function getUserIdByToken(token){
+    //console.log("Token:", token);
     return new Promise((resolve, reject) => {
       let user = USERS.find(user => user.token == token);
+      //console.log(token, user);
       resolve(user?.id); // user id or undefined
     });
   }
