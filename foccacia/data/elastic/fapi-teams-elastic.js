@@ -35,16 +35,16 @@ export default function init() {
         return fetchElastic('GET', '/competitions/_search')
             .then(resp => {
                 if (resp.error) {
-                    //console.error("Elastic error:", body.error.reason);
-                    return getObjApi("competitions/").then(comps => {
-                        return fetchElastic('POST', '/competitions/_doc' + '?refresh=wait_for', comps)
+                    return getObjApi("competitions/").then(res => {
+                        const comps = {competitions: res.competitions}
+                        return fetchElastic('POST', '/competitions/_doc/' + '?refresh=wait_for', comps)
                             .then(body => {
-                                return { id: body._id, ...comps }
+                                return comps
                             })
                     })
                 }
                 else 
-                    return resp.hits.hits[0]._source
+                    return resp.hits.hits[0]._source // array with only one element
             })
     }
 
@@ -58,35 +58,48 @@ export default function init() {
         });
     }
 
-    async function getTeams(competitionCode, season) {
-        return await getObjApi(`competitions/${competitionCode}/teams?season=${season}`)
+    function getTeams(competitionCode, season) {
+        return fetchElastic('GET', '/teams/_doc/' + `${competitionCode}${season}`)
+            .then(resp => {
+                if (!resp.found){
+                    return getObjApi(`competitions/${competitionCode}/teams?season=${season}`)
+                        .then(res => {
+                            const teams = {teams: res.teams}
+                            return fetchElastic('PUT', '/teams/_doc/' + `${competitionCode}${season}/` + '?refresh=wait_for', teams)
+                                .then(body => {
+                                    return teams
+                                })
+                        })
+                }
+                else
+                    return resp._source
+            })
     }
 
-    // FIX BUG OF TRYING TO ACCESS API WITHOUT THE TOKEN
     function getPlayer(playerId, year) {
-        return new Promise((resolve, reject) => {
-            const player = PLAYERS_CACHE.find(pl => pl.playerId == playerId)
-            if (player) return resolve(player)
-            getObjApi(`persons/${playerId}`).then(pl => {
-                const newObj = {
-                    playerId: pl.id,
-                    playerName: pl.name,
-                    teamId: pl.currentTeam.id,
-                    teamName: pl.currentTeam.name,
-                    position: pl.position,
-                    nationality: pl.nationality,
-                    age: year - Number(pl.dateOfBirth.split("-")[0])
+        return fetchElastic('GET', '/players/_doc/' + playerId)
+            .then(resp => {
+                if (!resp.found){
+                    return getObjApi(`persons/${playerId}`)
+                        .then(res => {
+                            const playerObj = {
+                                playerId: res.id,
+                                playerName: res.name,
+                                teamId: res.currentTeam.id,
+                                teamName: res.currentTeam.name,
+                                position: res.position,
+                                nationality: res.nationality,
+                                age: year - Number(res.dateOfBirth.split("-")[0])
+                            }
+                            return fetchElastic('PUT', '/players/_doc/' + `${playerId}/` + '?refresh=wait_for', playerObj)
+                                .then(body => {
+                                    return playerObj
+                                })
+                        })
                 }
-                PLAYERS_CACHE.push(newObj)
-                resolve(newObj)
-                //return newObj
+                else
+                    return resp._source
             })
-                .catch(error => {
-                    console.log(error)
-                    reject(errors.INVALID_PLAYER(playerId)) // WHAT TO DO IN CASE OF ERROR????
-                })
-
-        })
     }
 }
 

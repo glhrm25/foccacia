@@ -21,6 +21,11 @@ GET /competitions/_search
 Host: {{hostname}}:{{port}}
 Authorization: ApiKey {{token}}
 
+### List documents from /teams:
+GET /teams/_doc/PPL2023
+Host: {{hostname}}:{{port}}
+Authorization: ApiKey {{token}}
+
 ### List documents from /users:
 GET /users/_search
 Host: {{hostname}}:{{port}}
