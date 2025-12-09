@@ -11,4 +11,7 @@ export function fetchElastic(method, path, body=undefined){
 
     return fetch(URI_PREFIX + path, options)
         .then(response => response.json())
+        .catch(error => {
+            console.error(error.message) // FIX ERROR
+        })
 }

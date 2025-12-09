@@ -20,9 +20,8 @@
                     <td>{{this.name}}</td>
                     <td>{{this.position}}</td>
                     <td>
-                        <form action="/site/groups/{{group.id}}/players" method="POST">
-                            <input type="hidden" name="playerId" value="1">
-                            <input type="hidden" name="teamId" value="1">
+                        <form action="/site/groups/{{../../group.id}}/players" method="POST">
+                            <input type="hidden" name="playerId" value="{{this.playerId}}">
                             <input type="submit" value="add", class="btn btn-primary">
                         </form>
                     </td>

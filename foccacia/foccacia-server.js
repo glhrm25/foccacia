@@ -17,8 +17,8 @@ import usersServicesInit from './services/users-services.js';
 import groupsDataInit from './data/elastic/foccacia-data-elastic.js'
 //import groupsDataInit from './data/mem/foccacia-data-mem.js';
 //import groupsDataInit from './data/mock/mock-foccacia-data-mem.js';
-import usersDataInit from './data/elastic/users-data-elastic.js';
-//import usersDataInit from './data/mock/mock-users-data-mem.js';
+//import usersDataInit from './data/elastic/users-data-elastic.js';
+import usersDataInit from './data/mock/mock-users-data-mem.js';
 //import usersDataInit from './data/mem/users-data-mem.js';
 import fapiTeamsData from './data/elastic/fapi-teams-elastic.js'
 //import fapiTeamsData from './data/mem/fapi-teams-data.js';
@@ -36,16 +36,17 @@ let groupsSite;
 
 // Dependency Injection:
 try {
-  const groupsData = groupsDataInit();
-  const usersData = usersDataInit();
+  const groupsData = groupsDataInit()
+  const usersData = usersDataInit()
   const fapiData = fapiTeamsData()
 
-  const usersServices = usersServicesInit(usersData);
-  const groupsServices = groupsServicesInit(groupsData, fapiData, usersServices);
+  const usersServices = usersServicesInit(usersData)
+  const groupsServices = groupsServicesInit(groupsData, fapiData, usersServices)
 
-  groupsAPI = groupsApiInit(groupsServices);
-  usersAPI = usersApiInit(usersServices);
-  groupsSite = groupsSiteInit(groupsServices);
+
+  groupsAPI = groupsApiInit(groupsServices)
+  usersAPI = usersApiInit(usersServices)
+  groupsSite = groupsSiteInit(groupsServices)
 }
 catch (err) {
   console.error(err);

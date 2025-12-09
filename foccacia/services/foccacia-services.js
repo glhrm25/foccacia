@@ -188,7 +188,7 @@ export default function init(groupsData, footballData, usersServices) {
                 {
                     name: t.name, 
                     country: t.area.name, 
-                    squad: t.squad.map(p => ({name: p.name, position: p.position}))
+                    squad: t.squad.map(p => ({playerId: p.id, name: p.name, position: p.position}))
                 })
             )
         })

@@ -1,18 +1,21 @@
 <section class="container p-2">
-    <ul>
-        <li>Name : {{group.name}} </li>
-        <li>Description : {{group.description}} </li>
-    </ul>
+    <h4>
+        <ul>
+            <li>Name : {{group.name}} </li>
+            <li>Description : {{group.description}} </li>
+        </ul>
+    </h4>
 
     <h2>Squad</h2>
     <p>
         <table class="table" width="500" bgcolor="black">
-            <tr bgcolor="white">
+            <tr bgcolor="white" align="center">
                 <th width="200">Player Name</th>
                 <th width="200">Team Name</th>
                 <th width="200">Nationality</th>
                 <th width="200">Age</th>
                 <th width="200">Position</th>
+                <th></th>
             </tr>
             {{#each group.players}}
             <tr bgcolor="white" align="center">
@@ -22,7 +25,7 @@
                 <td>{{this.age}}</td>
                 <td> {{this.position}} </td> 
                 <td>
-                    <form action="/site/groups/{{group.id}}/players/{{this.id}}/delete" method="POST">
+                    <form action="/site/groups/{{../group.id}}/players/{{this.playerId}}/delete" method="POST">
                         <input type="submit" value="del">
                     </form>
                 </td>
@@ -31,7 +34,7 @@
         </table>
     </p>
 
-    <hr>
-    <a href="/site/competitions/{{group.competition.code}}/season/{{group.year}}/teams", class="btn btn-secondary"> Add Player </a> 
+    
+    <a href="/site/competitions/{{group.competition.code}}/season/{{group.year}}/teams?id={{group.id}}", class="btn btn-secondary"> Add Player </a> 
     <a href="/site/groups/{{group.id}}/updateForm" class="btn btn-primary"> Update group</a>
 </section>

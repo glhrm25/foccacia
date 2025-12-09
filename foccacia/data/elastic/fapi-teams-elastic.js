@@ -1,5 +1,5 @@
 import { errors } from '../../commons/internal-errors.js'
-import { fetchElastic } from './fetch-elastic.js';
+import { fetchElastic } from './fetch-elastic.js'
 
 let requestOptions = {
     method: `GET`,
@@ -19,7 +19,7 @@ export default function init() {
         try {
             // Returns the api's response if possible
             return (await fetch(`https://api.football-data.org/v4/${options}`, requestOptions)).json().then(res => {
-                if (res.errorCode) {
+                if (res.errorCode || res.error) {
                     throw errors.RESOURCE_NOT_AVAILABLE()
                 }
                 else return res

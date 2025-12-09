@@ -76,17 +76,18 @@ export default function init(groupsServices) {
       })
     }
 
-    async function internal_getCompetitions(req, res){
+    function internal_getCompetitions(req, res){
       return groupsServices.getCompetitions(req.query)
           .then( competitions => res.render("competitions-view", {competitions}) )
     }
 
-    async function internal_getTeams(req, res){
-      const output = await groupsServices.getTeams(req.params.competitionCode, req.params.season, req.userToken);
-      if (output.internalError) return output;
-      //console.log(output)
-      // Success case
-      res.render("teams-view", {teams: output});
+    function internal_getTeams(req, res){
+      const userToken = req.userToken
+      return groupsServices.getGroup(userToken, req.query.id)
+        .then(group => {
+            return groupsServices.getTeams(req.params.competitionCode, req.params.season, userToken)
+              .then(teams => res.render("teams-view", {teams: teams, group: group}) )
+        })
     }
 
     function internal_getAllGroups(req, res){
@@ -115,7 +116,8 @@ export default function init(groupsServices) {
 
     function internal_updateGroup(req, res){
       const groupId = req.params.groupId
-      return groupsServices.updateGroup(req.userToken, groupId, req.body)
+      const userToken = req.userToken
+      return groupsServices.updateGroup(userToken, groupId, req.body)
           .then( updateGroup => res.redirect("/site/groups") )
     }
 
@@ -125,7 +127,7 @@ export default function init(groupsServices) {
       return groupsServices.addPlayerToGroup(req.userToken, groupId, playerId)
           .then(newPlayer => {
             res.status(201)
-            return res.redirect(`/site/groups/${groupId}`)
+            res.redirect(`/site/groups/${groupId}`)
           })
     }  
 
