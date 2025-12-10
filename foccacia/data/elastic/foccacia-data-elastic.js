@@ -93,6 +93,7 @@ export default function init() {
             // Now need to complete the group data, because 
             // elastic-put replaces the resource (Completar o grupo com os dados)
             const newGroup = new Group(userId, updatedData.name, updatedData.description, group.competition, group.year)
+            newGroup.players = group.players
             return fetchElastic('PUT', '/groups/_doc/' + groupId + '?refresh=wait_for', newGroup)
                 .then(body => {
                     return joinGroupId(newGroup, body._id);
