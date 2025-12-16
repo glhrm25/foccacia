@@ -20,7 +20,8 @@ export default function init() {
             // Returns the api's response if possible
             return (await fetch(`https://api.football-data.org/v4/${options}`, requestOptions)).json().then(res => {
                 if (res.errorCode || res.error) {
-                    throw errors.RESOURCE_NOT_AVAILABLE()
+                    //throw errors.RESOURCE_NOT_AVAILABLE()
+                    return Promise.reject(errors.INVALID_QUERY())
                 }
                 else return res
             })

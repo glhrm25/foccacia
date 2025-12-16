@@ -1,3 +1,5 @@
+import { errors } from '../../commons/internal-errors.js'
+
 const URI_PREFIX='http://localhost:9200';
 
 export function fetchElastic(method, path, body=undefined){
@@ -13,5 +15,6 @@ export function fetchElastic(method, path, body=undefined){
         .then(response => response.json())
         .catch(error => {
             console.error(error.message) // FIX ERROR
+            return Promise.reject(errors.RESOURCE_NOT_AVAILABLE())
         })
 }

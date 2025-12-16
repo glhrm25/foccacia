@@ -30,24 +30,23 @@ export default function init(groupsData, footballData, usersServices) {
     // Output: an array of groups or an internal error object.
     function getAllGroups(userToken, query){
         const userIdPromise = usersServices.getUserId(userToken)
-        const groupsPromise = userIdPromise.then(
-            id => { return id ? groupsData.getGroupsForUser(id) : Promise.reject(errors.USER_NOT_FOUND()) }
-        )
-        
-        return groupsPromise.then(groups => {
-          const queryLen = Object.keys(query).length;
-          if (queryLen == 0) { // There is no query string
-            return groups;
-          }
-          if (queryLen == 1 && "search" in query) {
-            const querySearch = query["search"];
-            const searchedTasks = groupsData.searchGroups(groups, querySearch)
-            return(searchedTasks);
-          }
-          else {
-            return Promise.reject(errors.INVALID_QUERY());
-          }
-        })
+        const groupsPromise = userIdPromise
+            .then( id => { return id ? groupsData.getGroupsForUser(id) : Promise.reject(errors.USER_NOT_FOUND()) })
+        return groupsPromise
+            .then(groups => {
+                const queryLen = Object.keys(query).length;
+                if (queryLen == 0) { // There is no query string
+                    return groups;
+                }
+                if (queryLen == 1 && "search" in query) {
+                    const querySearch = query["search"];
+                    const searchedTasks = groupsData.searchGroups(groups, querySearch)
+                    return(searchedTasks);
+                }
+                else {
+                    return Promise.reject(errors.INVALID_QUERY());
+                }
+            })
     }
 
     // Input: a new group object.
@@ -129,69 +128,74 @@ export default function init(groupsData, footballData, usersServices) {
     // Output: the added player or an internal error object.
     function addPlayerToGroup(userToken, groupId, playerId){
         const userId = usersServices.getUserId(userToken)
-        return userId.then(id => {
-            const groupPromise = groupsData.getGroup(id, groupId)
-            return groupPromise.then(group => {
-                if (!group) return Promise.reject(errors.GROUP_NOT_FOUND(groupId))
-            
-                if (isPlayerInGroup(group, playerId)) return Promise.reject(errors.PLAYER_ALREADY_EXISTS(playerId))
+        return userId
+            .then(id => {
+                const groupPromise = groupsData.getGroup(id, groupId)
+                return groupPromise.then(group => {
+                    if (!group) return Promise.reject(errors.GROUP_NOT_FOUND(groupId))
                 
-                if(isSquadFull(group)) return Promise.reject(errors.SQUAD_IS_FULL(groupId))
-                
-                return footballData.getPlayer(playerId, group.year).then(pl => {
-                    return groupsData.addPlayerToGroup(id, groupId, pl)
+                    if (isPlayerInGroup(group, playerId)) return Promise.reject(errors.PLAYER_ALREADY_EXISTS(playerId))
+                    
+                    if(isSquadFull(group)) return Promise.reject(errors.SQUAD_IS_FULL(groupId))
+                    
+                    return footballData.getPlayer(playerId, group.year)
+                        .then(pl => {
+                            return groupsData.addPlayerToGroup(id, groupId, pl)
+                        })
                 })
             })
-        })
     }
 
     // Input: a groupName (String), a userToken (String) and a player id (String).
     // Output: the updated group without the corresponding player or an internal error object.
     function removePlayerFromGroup(userToken, groupId, playerId){
         const userId = usersServices.getUserId(userToken)
-        return userId.then(id => {
-            const groupPromise = groupsData.getGroup(id, groupId)
-            return groupPromise.then(group => {
-                if (!group) return Promise.reject(errors.GROUP_NOT_FOUND(groupId))
-                
-                if (!isPlayerInGroup(group, playerId)) return Promise.reject(errors.PLAYER_NOT_FOUND(playerId))
-    
-                return groupsData.removePlayerFromGroup(id, groupId, playerId)
+        return userId
+            .then(id => {
+                const groupPromise = groupsData.getGroup(id, groupId)
+                return groupPromise.then(group => {
+                    if (!group) return Promise.reject(errors.GROUP_NOT_FOUND(groupId))
+                    
+                    if (!isPlayerInGroup(group, playerId)) return Promise.reject(errors.PLAYER_NOT_FOUND(playerId))
+        
+                    return groupsData.removePlayerFromGroup(id, groupId, playerId)
+                })
             })
-        })
     }
 
     // Output: All the available competitions.
     function getCompetitions(query) {
-        return footballData.getCompetitions().then(output => {
-            const comps = output.competitions.map(comp => ({ name: comp.name, code: comp.code }))
-            const queryLen = Object.keys(query).length
-            if (queryLen == 0) { // There is no query string
-                return comps;
-            }
-            if (queryLen == 1 && "competition" in query) {
-                const querySearch = query["competition"];
-                const searchedGroups = footballData.searchCompetitionByCode(comps, querySearch)
-                return(searchedGroups);
-            }
-            else {
-                return Promise.reject(errors.INVALID_QUERY());
-            }
-        })
+        return footballData.getCompetitions()
+            .then(output => {
+                const comps = output.competitions.map(comp => ({ name: comp.name, code: comp.code }))
+                const queryLen = Object.keys(query).length
+                if (queryLen == 0) { // There is no query string
+                    return comps;
+                }
+                if (queryLen == 1 && "competition" in query) {
+                    const querySearch = query["competition"];
+                    const searchedGroups = footballData.searchCompetitionByCode(comps, querySearch)
+                    return(searchedGroups);
+                }
+                else {
+                    return Promise.reject(errors.INVALID_QUERY());
+                }
+            })
     }
 
     // Input: a competitionCode (String) and a season (String)
     // Output: All teams that participated on the specified competition.
     function getTeams(competitionCode, season) {
-        return footballData.getTeams(competitionCode, season).then(output => {
-            return output.teams.map(t => (
-                {
-                    name: t.name, 
-                    country: t.area.name, 
-                    squad: t.squad.map(p => ({playerId: p.id, name: p.name, position: p.position}))
-                })
-            )
-        })
+        return footballData.getTeams(competitionCode, season)
+            .then(output => {
+                return output.teams.map(t => (
+                    {
+                        name: t.name, 
+                        country: t.area.name, 
+                        squad: t.squad.map(p => ({playerId: p.id, name: p.name, position: p.position}))
+                    })
+                )
+            })
     }
 }
 

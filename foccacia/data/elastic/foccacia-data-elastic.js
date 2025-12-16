@@ -103,13 +103,14 @@ export default function init() {
 
     function addPlayerToGroup(userId, groupId, player) {
         const obj = { playerId: player.playerId, playerName: player.playerName, teamId: player.teamId, teamName: player.teamName }
-        return getGroup(userId, groupId).then(group => {
-            group.players.push(obj)
-            return fetchElastic('PUT', '/groups/_doc/' + groupId + '?refresh=wait_for', group)
-                .then(body => {
-                    return (joinGroupId(group, body._id))
-                }); // REPETIÇÃO DE CÓDIGO
-        })
+        return getGroup(userId, groupId)
+            .then(group => {
+                group.players.push(obj)
+                return fetchElastic('PUT', '/groups/_doc/' + groupId + '?refresh=wait_for', group)
+                    .then(body => {
+                        return (joinGroupId(group, body._id))
+                    }); // REPETIÇÃO DE CÓDIGO
+            })
     }
     
     function removePlayerFromGroup(userId, groupId, playerId) {
