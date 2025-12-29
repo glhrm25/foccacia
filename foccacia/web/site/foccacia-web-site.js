@@ -58,12 +58,14 @@ export default function init(groupsServices) {
       setHttpError(res, error);
     }
 
+    // Renders home page
     function internal_renderHomePage(req, res){
       return new Promise ((resolve, reject) => {
         res.render("home-view")
       })
     }
 
+    // Renders update page
     function internal_renderUpdatePage(req, res){
       return groupsServices.getGroup(req.userToken, req.params.groupId).then(group => {
         res.render("update-view", {group})

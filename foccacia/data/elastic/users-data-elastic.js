@@ -5,8 +5,9 @@ import { fetchElastic } from './fetch-elastic.js';
 // FUNCTIONS (API users with Elasticsearch database):
 
 class User {
-  constructor(username) {
+  constructor(username, password) {
     this.name = username;
+    this.password = password;
     this.token = crypto.randomUUID();
   }
 }
@@ -51,8 +52,8 @@ export default function init(){
     return getUserId({token: token});
   }
 
-  function addUser(username){   
-    const user = new User(username);
+  function addUser(username, password){   
+    const user = new User(username, password);
     return fetchElastic("POST", "/users/_doc", user)
       .then(body => {
         return joinUserId(user, body._id);

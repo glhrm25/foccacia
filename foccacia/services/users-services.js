@@ -14,7 +14,7 @@ export default function init(userData){
     getUserId
   };
 
-  function addUser(username){
+  function addUser(username, password){
     if (! username) {
       return Promise.reject(errors.INVALID_USER(username));
     }
@@ -23,7 +23,7 @@ export default function init(userData){
       if (userId) {
         return Promise.reject(errors.USER_ALREADY_EXISTS(username));
       }
-      return userData.addUser(username);
+      return userData.addUser(username, password);
     });
   }
 

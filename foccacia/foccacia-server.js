@@ -5,9 +5,13 @@ import cors from 'cors'
 import hbs from 'hbs';
 import path from 'path';
 import url from 'url';
+import passport from 'passport';
+import session from 'express-session';
+import cookieParser from 'cookie-parser';
 
 // Import all modules for Dependency Injection:
 import groupsSiteInit from './web/site/foccacia-web-site.js';
+import usersSiteInit from './web/site/users-web-site.js'
 import groupsApiInit from './web/api/foccacia-web-api.js';
 import usersApiInit from './web/api/users-web-api.js';
 
@@ -33,6 +37,7 @@ const PATH_PARTIALS = path.join(PATH_VIEWS, 'partials');
 let groupsAPI;
 let usersAPI;
 let groupsSite;
+let usersSite
 
 // Dependency Injection:
 try {
@@ -47,6 +52,7 @@ try {
   groupsAPI = groupsApiInit(groupsServices)
   usersAPI = usersApiInit(usersServices)
   groupsSite = groupsSiteInit(groupsServices)
+  usersSite = usersSiteInit(usersServices)
 }
 catch (err) {
   console.error(err);
@@ -78,6 +84,17 @@ if(groupsAPI && usersAPI && groupsSite) {
   // Enable all CORS requests
   app.use(cors());
 
+  const sessionHandler = session({
+    secret: 'isel-ipw-secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 24 * 60 * 60 *1000 }
+  })
+
+  app.use(sessionHandler)
+  app.use(passport.session());    // Support login sessions in passport
+  app.use(cookieParser());
+
   // Parser the body to URL-encoded (forms in HTML)
   // 'extended: true' means that the value can be of any type.
   app.use(express.urlencoded({ extended: true })); // (Lê dados enviados por formulários HTML (formulários tradicionais))
@@ -89,7 +106,11 @@ if(groupsAPI && usersAPI && groupsSite) {
   // add user
   app.post("/users", usersAPI.addUser);
   // TODO: implement web site to register an user (with passport module).
-  // app.post("/site/users", usersSite.addUser); ??
+  app.post("/site/users", usersSite.addUser);
+  app.get("/site/register", usersSite.renderRegisterPage)
+  app.post("/site/register", usersSite.addUser)
+  app.get("/site/login", usersSite.renderLoginPage)
+
 
   app.get("/", groupsSite.renderHomePage);
 
@@ -116,7 +137,7 @@ if(groupsAPI && usersAPI && groupsSite) {
   app.get("/site/groupForm", groupsSite.renderGroupFormPage)
 
   // delete group by id
-  app.delete("/groups/:groupId", groupsAPI.deleteGroup); // ? À FRENTE DO GROUPID ?????
+  app.delete("/groups/:groupId", groupsAPI.deleteGroup);
   app.post("/site/groups/:groupId/delete", groupsSite.deleteGroup);
 
   // update group by name
