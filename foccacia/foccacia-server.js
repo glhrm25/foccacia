@@ -8,6 +8,7 @@ import url from 'url';
 import passport from 'passport';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
+import configurePassport from './commons/passport-config.js';
 
 // Import all modules for Dependency Injection:
 import groupsSiteInit from './web/site/foccacia-web-site.js';
@@ -21,8 +22,8 @@ import usersServicesInit from './services/users-services.js';
 import groupsDataInit from './data/elastic/foccacia-data-elastic.js'
 //import groupsDataInit from './data/mem/foccacia-data-mem.js';
 //import groupsDataInit from './data/mock/mock-foccacia-data-mem.js';
-//import usersDataInit from './data/elastic/users-data-elastic.js';
-import usersDataInit from './data/mock/mock-users-data-mem.js';
+import usersDataInit from './data/elastic/users-data-elastic.js';
+//import usersDataInit from './data/mock/mock-users-data-mem.js';
 //import usersDataInit from './data/mem/users-data-mem.js';
 import fapiTeamsData from './data/elastic/fapi-teams-elastic.js'
 //import fapiTeamsData from './data/mem/fapi-teams-data.js';
@@ -40,7 +41,7 @@ let groupsSite;
 let usersSite
 
 // Dependency Injection:
-try {
+//try {
   const groupsData = groupsDataInit()
   const usersData = usersDataInit()
   const fapiData = fapiTeamsData()
@@ -53,10 +54,11 @@ try {
   usersAPI = usersApiInit(usersServices)
   groupsSite = groupsSiteInit(groupsServices)
   usersSite = usersSiteInit(usersServices)
+  /*
 }
 catch (err) {
   console.error(err);
-}
+}*/
 
 if(groupsAPI && usersAPI && groupsSite) {
   const app = express(); // Express function returns an app
@@ -84,16 +86,24 @@ if(groupsAPI && usersAPI && groupsSite) {
   // Enable all CORS requests
   app.use(cors());
 
+  configurePassport(passport, usersData)
+
   const sessionHandler = session({
     secret: 'isel-ipw-secret',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { maxAge: 24 * 60 * 60 *1000 }
   })
 
   app.use(sessionHandler)
   app.use(passport.session());    // Support login sessions in passport
   app.use(cookieParser());
+
+  app.use((req, res, next) => {
+    res.locals.userLoggedIn = !!req.user
+    res.locals.username = req.user ? req.user.name : null
+    next()
+  })
 
   // Parser the body to URL-encoded (forms in HTML)
   // 'extended: true' means that the value can be of any type.
@@ -105,14 +115,21 @@ if(groupsAPI && usersAPI && groupsSite) {
   // USERS
   // add user
   app.post("/users", usersAPI.addUser);
-  // TODO: implement web site to register an user (with passport module).
-  app.post("/site/users", usersSite.addUser);
+  // User registration
   app.get("/site/register", usersSite.renderRegisterPage)
   app.post("/site/register", usersSite.addUser)
+  // User login
   app.get("/site/login", usersSite.renderLoginPage)
-
-
-  app.get("/", groupsSite.renderHomePage);
+  app.post("/site/login", usersSite.login)
+  // User logout
+  app.post('/site/logout', (req, res) => {
+    req.logout(() => {
+      res.redirect('/') // Redirects to home page
+    })
+  })
+  
+  // Home Page
+  app.get("/", (req, res) => {res.render("home-view")} );
 
   // COMPETITIONS
   app.get("/competitions", groupsAPI.getCompetitions);
@@ -125,33 +142,33 @@ if(groupsAPI && usersAPI && groupsSite) {
   // GROUPS
   // get group by id
   app.get("/groups/:groupId", groupsAPI.getGroup);
-  app.get("/site/groups/:groupId", groupsSite.getGroup);
+  app.get("/site/groups/:groupId", usersSite.authenticate, groupsSite.getGroup);
 
   // list groups
   app.get("/groups", groupsAPI.getAllGroups);
-  app.get("/site/groups", groupsSite.getAllGroups);
+  app.get("/site/groups", usersSite.authenticate, groupsSite.getAllGroups);
 
   // create group
   app.post("/groups", groupsAPI.addGroup);
-  app.post("/site/groups", groupsSite.addGroup);
-  app.get("/site/groupForm", groupsSite.renderGroupFormPage)
+  app.post("/site/groups", usersSite.authenticate, groupsSite.addGroup);
+  app.get("/site/groupForm", usersSite.authenticate, groupsSite.renderGroupFormPage)
 
   // delete group by id
-  app.delete("/groups/:groupId", groupsAPI.deleteGroup);
-  app.post("/site/groups/:groupId/delete", groupsSite.deleteGroup);
+  app.delete("/groups/:groupId", usersSite.authenticate, groupsAPI.deleteGroup);
+  app.post("/site/groups/:groupId/delete", usersSite.authenticate, groupsSite.deleteGroup);
 
   // update group by name
-  app.put("/groups/:groupId", groupsAPI.updateGroup);
-  app.post("/site/groups/:groupId/update", groupsSite.updateGroup);
-  app.get("/site/groups/:groupId/updateForm", groupsSite.renderUpdatePage)
+  app.put("/groups/:groupId", usersSite.authenticate, groupsAPI.updateGroup);
+  app.post("/site/groups/:groupId/update", usersSite.authenticate, groupsSite.updateGroup);
+  app.get("/site/groups/:groupId/updateForm", usersSite.authenticate, groupsSite.renderUpdatePage)
 
   // add players to group
-  app.post("/groups/:groupId/players", groupsAPI.addPlayerToGroup)
-  app.post("/site/groups/:groupId/players", groupsSite.addPlayerToGroup)
+  app.post("/groups/:groupId/players", usersSite.authenticate, groupsAPI.addPlayerToGroup)
+  app.post("/site/groups/:groupId/players", usersSite.authenticate, groupsSite.addPlayerToGroup)
 
   // delete player from group
-  app.delete("/groups/:groupId/players/:playerId", groupsAPI.removePlayerFromGroup)
-  app.post("/site/groups/:groupId/players/:playerId/delete", groupsSite.removePlayerFromGroup);
+  app.delete("/groups/:groupId/players/:playerId", usersSite.authenticate, groupsAPI.removePlayerFromGroup)
+  app.post("/site/groups/:groupId/players/:playerId/delete", usersSite.authenticate, groupsSite.removePlayerFromGroup);
 
   // Handling all errors
   app.use("/site", groupsSite.errorHandler);

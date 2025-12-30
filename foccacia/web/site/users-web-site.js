@@ -1,4 +1,3 @@
-import { errorToHttp  } from "../errors-to-http-responses.js";
 import { errors } from "../../commons/internal-errors.js";
 
 // FUNCTIONS (WEB API):
@@ -13,15 +12,16 @@ export default function init(usersServices) {
     return {
         renderLoginPage,
         renderRegisterPage,
-        addUser
+        addUser,
+        login,
+        authenticate
     };
 
     // Renders login page 
     function renderLoginPage(req, res){  
-        // If user is already authenticated, go to home
         return new Promise((resolve, reject) => {
             if (req.isAuthenticated())
-                res.redirect('/');        
+                res.redirect('/');      // If user is already authenticated, go to home
             else res.render('login-form-view');
         })
     }
@@ -43,4 +43,36 @@ export default function init(usersServices) {
         req.login(user, () => {res.redirect('/') })
     })
   }
+
+    function login(req, res, next){
+        const username = req.body.username; 
+        const password = req.body.password;
+
+        const userPromise = usersServices.getUser(username, password)
+        return userPromise.then(user => {
+            req.login(user, loginAction)
+        })	
+
+        function loginAction(err){
+            if (err) return next(err);
+            return res.redirect('/');
+        }
+    }
+
+
+    function authenticate(req, res, next){
+        return new Promise((resolve, reject) => {
+            if (req.isAuthenticated()){
+                next();
+                return
+            }
+                
+            else return reject(errors.NOT_AUTHORIZED())
+        })
+    }
+}
+
+function loginAction(err, next){
+    if (err) return next(err);
+	return res.redirect('/');
 }

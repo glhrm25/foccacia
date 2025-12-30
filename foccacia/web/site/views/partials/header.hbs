@@ -10,4 +10,25 @@
     
         <a href="/site/competitions" style="color: white;"> Competitions </a>
     </div>
+
+    <nav class="navbar">
+        <div class="left">
+        </div>
+
+        <div class="right">
+            <ul>
+                {{#if userLoggedIn}}
+                <form action="/site/logout" method="POST" style="display:inline;">
+                    <button type="submit" style="background:none; text-decoration: underline; border:none; color:white; cursor:pointer;">
+                        Logout
+                    </button>
+                </form>
+
+                {{else}}
+                <a href="/site/login" style="color: white;"> Login</a>
+                <a href="/site/register" style="color: white;"> Register</a>
+                {{/if}}
+            </ul>
+        </div>
+    </nav>
 </header>

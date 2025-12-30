@@ -1,5 +1,4 @@
 import crypto from 'node:crypto';
-//import { errors } from '../../commons/internal-errors.js';
 import { fetchElastic } from './fetch-elastic.js';
 
 // FUNCTIONS (API users with Elasticsearch database):
@@ -36,11 +35,33 @@ function getUserId(matchObj){
   );
 }
 
+function getUserBy(matchObj){
+  const match = {
+    query: {
+      match: matchObj
+    }
+  };
+  return fetchElastic("POST", "/users/_search", match)
+  .then(body => {
+      if (body.error){
+        console.error("Elastic error:", body.error.reason);
+        return undefined;
+      }
+      const usersArray = body.hits.hits;
+      //console.log(usersArray);
+      if(usersArray.length > 0)
+        return joinUserId(usersArray[0]._source, usersArray[0]._id)
+    }
+  );
+}
+
 export default function init(){
 
   return {
     getUserIdByName,
     getUserIdByToken,
+    getUser,
+    getUserById,
     addUser
   }
 
@@ -50,6 +71,22 @@ export default function init(){
 
   function getUserIdByToken(token){
     return getUserId({token: token});
+  }
+
+  function getUser(username){
+    return getUserBy({name: username})
+  }
+
+  function getUserById(userId){
+    return fetchElastic("GET", `/users/_doc/${userId}`)
+    .then(body => {
+        if (body.error){
+          console.error("Elastic error:", body.error.reason);
+          return undefined;
+        }
+        return joinUserId(body._source, body._id)
+      }
+    );
   }
 
   function addUser(username, password){   

@@ -28,7 +28,6 @@ export default function init(groupsServices) {
       deleteGroup: processRequest(internal_deleteGroup),
       addPlayerToGroup: processRequest(internal_addPlayerToGroup),
       removePlayerFromGroup: processRequest(internal_removePlayerFromGroup),
-      renderHomePage: processRequest(internal_renderHomePage),
       renderUpdatePage: processRequest(internal_renderUpdatePage),
       renderGroupFormPage: processRequest(internal_renderGroupFormPage),
       errorHandler: errorHandler
@@ -56,13 +55,6 @@ export default function init(groupsServices) {
         error = errors.INVALID_JSON_PARSER();
       }
       setHttpError(res, error);
-    }
-
-    // Renders home page
-    function internal_renderHomePage(req, res){
-      return new Promise ((resolve, reject) => {
-        res.render("home-view")
-      })
     }
 
     // Renders update page
@@ -141,8 +133,7 @@ export default function init(groupsServices) {
     }
 
     // Auxiliary module function
-  function getToken(req) {
-    // TODO: add Web site authentication (after, in the last classes)
-    return "b0506867-77c3-4142-9437-1f627deebd67"; // asilva in mock Memory
-  }
+    function getToken(req) {
+      return req.user.token
+    }
 }

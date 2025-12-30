@@ -16,7 +16,8 @@ export const INTERNAL_ERROR_CODES = {
     PLAYER_NOT_FOUND: 15,
     SQUAD_IS_FULL: 16,
     INVALID_JSON_PARSER: 17,
-    RESOURCE_NOT_AVAILABLE: 18
+    RESOURCE_NOT_AVAILABLE: 18,
+    INVALID_CREDENTIALS: 19
 };
 
 // Constructor function for an Error
@@ -68,8 +69,8 @@ export const errors = {
     MISSING_TOKEN: () => { 
         return new Error(INTERNAL_ERROR_CODES.MISSING_TOKEN,`Missing token`);
     },
-    NOT_AUTHORIZED: (who, what) => { 
-        return new Error(INTERNAL_ERROR_CODES.NOT_AUTHORIZED,`${who} has no access to ${what}`);
+    NOT_AUTHORIZED: () => { 
+        return new Error(INTERNAL_ERROR_CODES.NOT_AUTHORIZED,`Unauthorized access. Please log in.`);
     },
     SQUAD_IS_FULL: (what) => { 
         return new Error(INTERNAL_ERROR_CODES.SQUAD_IS_FULL,`Squad of group ${what} is full.`);
@@ -79,5 +80,8 @@ export const errors = {
     },
     RESOURCE_NOT_AVAILABLE: () => {
         return new Error(INTERNAL_ERROR_CODES.RESOURCE_NOT_AVAILABLE, `The resource you're looking for is not available.`);
+    },
+    INVALID_CREDENTIALS: () => {
+        return new Error(INTERNAL_ERROR_CODES.INVALID_CREDENTIALS, `Invalid credentials. Please try again.`);
     },
 }

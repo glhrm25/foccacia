@@ -11,6 +11,7 @@ export default function init(userData){
 
   return {
     addUser,
+    getUser: getMatchedCredentialsUser,
     getUserId
   };
 
@@ -25,6 +26,16 @@ export default function init(userData){
       }
       return userData.addUser(username, password);
     });
+  }
+
+  // Returns the respective user by its credentials
+  function getMatchedCredentialsUser(username, password){
+    const userPromise = userData.getUser(username, password)
+    return userPromise.then(user => {
+      if (!user) return Promise.reject(errors.USER_NOT_FOUND(username))
+      else if (password != user.password) return Promise.reject(errors.INVALID_CREDENTIALS())
+      else return user
+    })
   }
 
   // Auxiliary function: get userId by token
