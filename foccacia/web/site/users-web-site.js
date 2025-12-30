@@ -59,7 +59,6 @@ export default function init(usersServices) {
         }
     }
 
-
     function authenticate(req, res, next){
         return new Promise((resolve, reject) => {
             if (req.isAuthenticated()){
@@ -70,9 +69,4 @@ export default function init(usersServices) {
             else return reject(errors.NOT_AUTHORIZED())
         })
     }
-}
-
-function loginAction(err, next){
-    if (err) return next(err);
-	return res.redirect('/');
 }

@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+//import { errors } from '../commons/internal-errors.js';
 import { fetchElastic } from './fetch-elastic.js';
 
 // FUNCTIONS (API users with Elasticsearch database):
@@ -48,7 +49,6 @@ function getUserBy(matchObj){
         return undefined;
       }
       const usersArray = body.hits.hits;
-      //console.log(usersArray);
       if(usersArray.length > 0)
         return joinUserId(usersArray[0]._source, usersArray[0]._id)
     }
@@ -66,11 +66,17 @@ export default function init(){
   }
 
   function getUserIdByName(username){
-    return getUserId({name: username});
+    return getUserBy({name: username})
+      .then(user => {
+        return user ? user.id : user;
+      })
   }
 
   function getUserIdByToken(token){
-    return getUserId({token: token});
+    return getUserBy({token: token})
+      .then(user => {
+        return user ? user.id : user;
+      });
   }
 
   function getUser(username){

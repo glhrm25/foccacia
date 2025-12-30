@@ -76,7 +76,7 @@ export default function init(groupsData, footballData, usersServices) {
             
             const groupPromise = groupsData.getGroup(id, groupId)
             return groupPromise.then(group => {
-                if (!group) return Promise.reject(errors.GROUP_NOT_FOUND(groupId))
+                if (!group) return Promise.reject(errors.GROUP_NOT_FOUND())
                 return Promise.all(group.players.map(pl => footballData.getPlayer(pl.playerId, group.year)))
                     .then(players => {
                         const g = { ...group }
@@ -98,7 +98,7 @@ export default function init(groupsData, footballData, usersServices) {
             const groupPromise = groupsData.getGroup(id, groupId)
             return groupPromise.then(group => {
                 if (!group) {
-                    return Promise.reject(errors.GROUP_NOT_FOUND(groupId))
+                    return Promise.reject(errors.GROUP_NOT_FOUND())
                 }
                 return groupsData.deleteGroup(id, groupId)
             })
@@ -116,7 +116,7 @@ export default function init(groupsData, footballData, usersServices) {
 
             const groupPromise = groupsData.getGroup(id, groupId)
             return groupPromise.then(group => {
-                if (!group) return Promise.reject(errors.GROUP_NOT_FOUND(groupId))
+                if (!group) return Promise.reject(errors.GROUP_NOT_FOUND())
 
                 // TODO: CHECK IF THERE'S ALREADY A GROUP WITH THE NEW NAME
                 return groupsData.updateGroup(id, groupId, updates)
@@ -132,11 +132,11 @@ export default function init(groupsData, footballData, usersServices) {
             .then(id => {
                 const groupPromise = groupsData.getGroup(id, groupId)
                 return groupPromise.then(group => {
-                    if (!group) return Promise.reject(errors.GROUP_NOT_FOUND(groupId))
+                    if (!group) return Promise.reject(errors.GROUP_NOT_FOUND())
                 
-                    if (isPlayerInGroup(group, playerId)) return Promise.reject(errors.PLAYER_ALREADY_EXISTS(playerId))
+                    if (isPlayerInGroup(group, playerId)) return Promise.reject(errors.PLAYER_ALREADY_EXISTS())
                     
-                    if(isSquadFull(group)) return Promise.reject(errors.SQUAD_IS_FULL(groupId))
+                    if(isSquadFull(group)) return Promise.reject(errors.SQUAD_IS_FULL())
                     
                     return footballData.getPlayer(playerId, group.year)
                         .then(pl => {
@@ -154,7 +154,7 @@ export default function init(groupsData, footballData, usersServices) {
             .then(id => {
                 const groupPromise = groupsData.getGroup(id, groupId)
                 return groupPromise.then(group => {
-                    if (!group) return Promise.reject(errors.GROUP_NOT_FOUND(groupId))
+                    if (!group) return Promise.reject(errors.GROUP_NOT_FOUND())
                     
                     if (!isPlayerInGroup(group, playerId)) return Promise.reject(errors.PLAYER_NOT_FOUND(playerId))
         

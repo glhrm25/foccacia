@@ -45,14 +45,14 @@ export const errors = {
     INVALID_PARAMETER: (what) => {
         return new Error(INTERNAL_ERROR_CODES.INVALID_PARAMETER, `Invalid parameter ${what}`);
     },
-    GROUP_NOT_FOUND: (what) => { 
-        return new Error(INTERNAL_ERROR_CODES.GROUP_NOT_FOUND,`Group ${what} not found`);
+    GROUP_NOT_FOUND: () => { 
+        return new Error(INTERNAL_ERROR_CODES.GROUP_NOT_FOUND,`Group not found`);
     },
     GROUP_ALREADY_EXISTS: (who) => {
         return new Error(INTERNAL_ERROR_CODES.GROUP_ALREADY_EXISTS, `Group ${who} already exists. Try another group name.`);
     },
-    PLAYER_ALREADY_EXISTS: (who) => {
-        return new Error(INTERNAL_ERROR_CODES.GROUP_ALREADY_EXISTS, `Player ${who} is already in the group.`);
+    PLAYER_ALREADY_EXISTS: () => {
+        return new Error(INTERNAL_ERROR_CODES.GROUP_ALREADY_EXISTS, `Player is already in the group.`);
     },
     PLAYER_NOT_FOUND: (who) => { 
         return new Error(INTERNAL_ERROR_CODES.GROUP_NOT_FOUND,`Player with id ${who} not found`);
@@ -72,8 +72,8 @@ export const errors = {
     NOT_AUTHORIZED: () => { 
         return new Error(INTERNAL_ERROR_CODES.NOT_AUTHORIZED,`Unauthorized access. Please log in.`);
     },
-    SQUAD_IS_FULL: (what) => { 
-        return new Error(INTERNAL_ERROR_CODES.SQUAD_IS_FULL,`Squad of group ${what} is full.`);
+    SQUAD_IS_FULL: () => { 
+        return new Error(INTERNAL_ERROR_CODES.SQUAD_IS_FULL,`Squad is full.`);
     },
     INVALID_JSON_PARSER: () => {
         return new Error(INTERNAL_ERROR_CODES.INVALID_JSON_PARSER, `Invalid body. Cannot parser the body.`);

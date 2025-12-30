@@ -133,7 +133,7 @@ if(groupsAPI && usersAPI && groupsSite) {
 
   // COMPETITIONS
   app.get("/competitions", groupsAPI.getCompetitions);
-  app.get("/site/competitions", groupsSite.getCompetitions);
+  app.get("/site/competitions", usersSite.authenticate, groupsSite.getCompetitions);
 
   // TEAMS
   app.get("/competitions/:competitionCode/season/:season/teams", groupsAPI.getTeams);
