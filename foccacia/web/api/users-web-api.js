@@ -14,7 +14,7 @@ export default function init(usersServices){
   };
 
   function addUser(req, res){
-    const userPromise = usersServices.addUser(req.body.username);
+    const userPromise = usersServices.addUser(req.body.username, req.body.password);
     return userPromise.then(user => {
       res.status(201);
       res.json({token: user.token});

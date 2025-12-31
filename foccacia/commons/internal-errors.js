@@ -27,8 +27,8 @@ function Error(code, description) {
 }
 
 export const errors = {
-    INVALID_USER: (who) => {
-        return new Error(INTERNAL_ERROR_CODES.INVALID_USER, `Invalid username '${who}'.`);
+    INVALID_USER: () => {
+        return new Error(INTERNAL_ERROR_CODES.INVALID_USER, `Invalid user.`);
     },
     INVALID_PLAYER: (who) => {
         return new Error(INTERNAL_ERROR_CODES.INVALID_USER, `Invalid player with player id ${who}.`);

@@ -16,7 +16,7 @@ export default function init(userData){
   };
 
   function addUser(username, password){
-    if (! username) {
+    if (!username || !password) {
       return Promise.reject(errors.INVALID_USER(username));
     }
     const userIdPromise = userData.getUserIdByName(username);

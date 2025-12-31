@@ -59,15 +59,13 @@ export default function init(groupsServices) {
 
     // Renders update page
     function internal_renderUpdatePage(req, res){
-      return groupsServices.getGroup(req.userToken, req.params.groupId).then(group => {
-        res.render("update-view", {group})
-      })
+      return groupsServices.getGroup(req.userToken, req.params.groupId)
+          .then(group => res.render("update-view", {group}) )
     }
 
     function internal_renderGroupFormPage(req, res) {
-      return groupsServices.getCompetitions(req.query).then(competition => {
-        res.render("groupForm-view", competition[0]) // "competition" is always an array with only one element 
-      })
+      return groupsServices.getCompetitions(req.query)
+          .then(competition =>  res.render("groupForm-view", competition[0]) ) // "competition" is always an array with only one element 
     }
 
     function internal_getCompetitions(req, res){

@@ -542,10 +542,14 @@ components:
       type: object
       required:
         - userName
+        - password
       properties:
         userName:
           type: string
-          example: asilva          
+          example: asilva      
+        password:
+          type: string
+          example: abcd1234    
     MissingParameter:
       type: object
       properties:

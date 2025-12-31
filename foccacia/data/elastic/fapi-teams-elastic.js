@@ -18,13 +18,13 @@ export default function init() {
     async function getObjApi(options) {
         try {
             // Returns the api's response if possible
-            return (await fetch(`https://api.football-data.org/v4/${options}`, requestOptions)).json().then(res => {
-                if (res.errorCode || res.error) {
-                    //throw errors.RESOURCE_NOT_AVAILABLE()
-                    return Promise.reject(errors.INVALID_QUERY())
-                }
-                else return res
-            })
+            return (await fetch(`https://api.football-data.org/v4/${options}`, requestOptions)).json()
+                .then(res => {
+                    if (res.errorCode || res.error)
+                        return Promise.reject(errors.RESOURCE_NOT_AVAILABLE())
+                    
+                    else return res
+                })
         }
         catch (error) {
             // Else, shows error
@@ -36,13 +36,13 @@ export default function init() {
         return fetchElastic('GET', '/competitions/_search')
             .then(resp => {
                 if (resp.error) {
-                    return getObjApi("competitions/").then(res => {
-                        const comps = {competitions: res.competitions}
-                        return fetchElastic('POST', '/competitions/_doc/' + '?refresh=wait_for', comps)
-                            .then(body => {
-                                return comps
-                            })
-                    })
+                    return getObjApi("competitions/")
+                        .then(res => {
+                            const comps = res.competitions.map(cmp => ({name: cmp.name, code: cmp.code})) // Guarda apenas o nome e código de cada competição
+                            const competitions = {competitions: comps}
+                            return fetchElastic('POST', '/competitions/_doc/' + '?refresh=wait_for', competitions)
+                                .then(() => competitions )
+                        })
                 }
                 else 
                     return resp.hits.hits[0]._source // array with only one element
@@ -65,11 +65,16 @@ export default function init() {
                 if (!resp.found){
                     return getObjApi(`competitions/${competitionCode}/teams?season=${season}`)
                         .then(res => {
-                            const teams = {teams: res.teams}
-                            return fetchElastic('PUT', '/teams/_doc/' + `${competitionCode}${season}/` + '?refresh=wait_for', teams)
-                                .then(body => {
-                                    return teams
+                            const filteredTeams = res.teams.map(
+                                t => ({
+                                    name: t.name, 
+                                    country: t.area.name, 
+                                    squad: t.squad.map(p => ({playerId: p.id, name: p.name, position: p.position}))
                                 })
+                            )
+                            const teams = {teams: filteredTeams}
+                            return fetchElastic('PUT', '/teams/_doc/' + `${competitionCode}${season}/` + '?refresh=wait_for', teams)
+                                .then(() => teams )
                         })
                 }
                 else

@@ -16,26 +16,6 @@ function joinUserId(user, userId) {
     return Object.assign({id: userId}, user);
 }
 
-function getUserId(matchObj){
-  const match = {
-    query: {
-      match: matchObj
-    }
-  };
-  return fetchElastic("POST", "/users/_search", match)
-  .then(body => {
-      if (body.error){
-        console.error("Elastic error:", body.error.reason);
-        return undefined;
-      }
-      const usersArray = body.hits.hits;
-      //console.log(usersArray);
-      if(usersArray.length > 0)
-        return(usersArray[0]._id);
-    }
-  );
-}
-
 function getUserBy(matchObj){
   const match = {
     query: {
