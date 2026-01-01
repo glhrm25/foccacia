@@ -50,3 +50,8 @@ Authorization: ApiKey {{token}}
 DELETE /teams
 Host: {{hostname}}:{{port}}
 Authorization: ApiKey {{token}}
+
+### Remove Players index:
+DELETE /players
+Host: {{hostname}}:{{port}}
+Authorization: ApiKey {{token}}

@@ -108,7 +108,7 @@ export default function init(groupsData, footballData, usersServices) {
     // Input: a groupName (String), a userToken (String) and a new group object.
     // Output: the updated group or a internal error object.
     function updateGroup(userToken, groupId, updates) {
-        if (!isValidUpdate(updates)) return errors.INVALID_UPDATE()
+        if (!isValidUpdate(updates)) return Promise.reject(errors.INVALID_UPDATE())
         
         const userId = usersServices.getUserId(userToken)
         return userId.then(id => {
@@ -118,7 +118,6 @@ export default function init(groupsData, footballData, usersServices) {
             return groupPromise.then(group => {
                 if (!group) return Promise.reject(errors.GROUP_NOT_FOUND())
 
-                // TODO: CHECK IF THERE'S ALREADY A GROUP WITH THE NEW NAME
                 return groupsData.updateGroup(id, groupId, updates)
             })
         })

@@ -25,9 +25,12 @@
                 <td>{{this.age}}</td>
                 <td> {{this.position}} </td> 
                 <td>
-                    <form action="/site/groups/{{../group.id}}/players/{{this.playerId}}/delete" method="POST">
-                        <input type="submit" value="del">
-                    </form>
+                    <button id="btn-delete-player"
+                        class="btn btn-danger btn-sm float-end"
+                        type="button"
+                        onclick="handleClickDeletePlayer('{{../group.id}}', '{{../group.name}}', '{{this.playerId}}', '{{this.playerName}}')"
+                        > del
+                    </button>
                 </td>
             </tr>
             {{/each}}

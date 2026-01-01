@@ -1,15 +1,21 @@
 <section class="container p-2 bg-light shadow border">
     <h3> Update group: {{group.name}} </h3>
-    <form action="/site/groups/{{group.id}}/update" method="POST">
-        <label for="groupTitle" class="form-label"> Name: </label>
-        <input type="text" id="groupTitle" class="form-control" name="name" required> 
+    <!-- <form id="updateGroupForm" action="/site/groups/{{group.id}}/update" method="post"> -->
+    <form id="updateGroupForm" action="/site/groups/{{group.id}}">
+        <label for="groupName" class="form-label"> Name: </label>
+        <input type="text" id="groupName" class="form-control" name="name" required> 
 
         <br>
         <label for="groupDescription" class="form-label"> Description: </label>
         <textarea id="groupDescription" class="form-control" name="description" required> </textarea>
 
         <br>
+        <button id="btn-update-group"
+            class="btn btn-primary" 
+            type="button" 
+            form="updateGroupForm" 
+            onclick="handleClickUpdate('{{group.id}}', '{{group.name}}')"
+        > Submit </button>
         <a href="/site/groups/" class="btn btn-danger">Cancel</a>
-        <input type="submit" class="btn btn-primary" value="Save">
     </form>
 </section>

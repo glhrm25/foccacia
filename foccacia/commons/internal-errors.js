@@ -37,7 +37,7 @@ export const errors = {
         return new Error(INTERNAL_ERROR_CODES.INVALID_GROUP, `Invalid Group. A group needs a valid name, description, competition and year.`);
     },
     INVALID_UPDATE: () => {
-        return new Error(INTERNAL_ERROR_CODES.INVALID_UPDATE, `Invalid Group update. It is only allowed to update a group's name and description. Please provide a valid name and description to update.`);
+        return new Error(INTERNAL_ERROR_CODES.INVALID_UPDATE, `Invalid Group update. Please provide a valid name and description.`);
     },
     INVALID_QUERY: () => {
         return new Error(INTERNAL_ERROR_CODES.INVALID_QUERY, `Invalid query.`);

@@ -99,7 +99,7 @@ if(groupsAPI && usersAPI && groupsSite) {
   app.use(passport.session());    // Support login sessions in passport
   app.use(cookieParser());
 
-  app.use((req, res, next) => {
+  app.use((req, res, next) => { // Todas as respostas têm informação sobre o nome do utilizar, caso este tenha feito login
     res.locals.userLoggedIn = !!req.user
     res.locals.username = req.user ? req.user.name : null
     next()
@@ -132,7 +132,7 @@ if(groupsAPI && usersAPI && groupsSite) {
   app.get("/", (req, res) => {res.render("home-view")} );
 
   // COMPETITIONS
-  app.get("/competitions", groupsAPI.getCompetitions);
+  app.get("/competitions", usersSite.authenticate, groupsAPI.getCompetitions);
   app.get("/site/competitions", usersSite.authenticate, groupsSite.getCompetitions);
 
   // TEAMS
@@ -141,26 +141,31 @@ if(groupsAPI && usersAPI && groupsSite) {
 
   // GROUPS
   // get group by id
-  app.get("/groups/:groupId", groupsAPI.getGroup);
+  app.get("/groups/:groupId", usersSite.authenticate, groupsAPI.getGroup);
   app.get("/site/groups/:groupId", usersSite.authenticate, groupsSite.getGroup);
 
   // list groups
-  app.get("/groups", groupsAPI.getAllGroups);
+  app.get("/groups", usersSite.authenticate, groupsAPI.getAllGroups);
   app.get("/site/groups", usersSite.authenticate, groupsSite.getAllGroups);
 
   // create group
-  app.post("/groups", groupsAPI.addGroup);
-  app.post("/site/groups", usersSite.authenticate, groupsSite.addGroup);
+  app.post("/groups", usersSite.authenticate, groupsAPI.addGroup)
   app.get("/site/groupForm", usersSite.authenticate, groupsSite.renderGroupFormPage)
+  app.post("/site/groups", usersSite.authenticate, groupsSite.addGroup)
 
   // delete group by id
   app.delete("/groups/:groupId", usersSite.authenticate, groupsAPI.deleteGroup);
-  app.post("/site/groups/:groupId/delete", usersSite.authenticate, groupsSite.deleteGroup);
+  app.delete("/site/groups/:groupId", usersSite.authenticate, groupsSite.deleteGroup)
 
   // update group by name
   app.put("/groups/:groupId", usersSite.authenticate, groupsAPI.updateGroup);
-  app.post("/site/groups/:groupId/update", usersSite.authenticate, groupsSite.updateGroup);
   app.get("/site/groups/:groupId/updateForm", usersSite.authenticate, groupsSite.renderUpdatePage)
+  /* -> THE ROUTE BELOW IS NOT ALLOWED IN THE MOST RECENT VERSION OF EXPRESS
+  * -> TO FIX THIS, WE CREATE TWO SEPARATE ROUTES, ONE WITH THE GROUPID AND ONE WITHOUT THE GROUPID
+  */
+  //app.put("/site/groups/:groupId?", usersSite.authenticate, groupsSite.updateGroup); // ? is not allowed
+  app.put("/site/groups/:groupId", usersSite.authenticate, groupsSite.updateGroup); // Two separate routes
+  app.put("/site/groups", usersSite.authenticate, groupsSite.updateGroup);
 
   // add players to group
   app.post("/groups/:groupId/players", usersSite.authenticate, groupsAPI.addPlayerToGroup)
@@ -168,7 +173,8 @@ if(groupsAPI && usersAPI && groupsSite) {
 
   // delete player from group
   app.delete("/groups/:groupId/players/:playerId", usersSite.authenticate, groupsAPI.removePlayerFromGroup)
-  app.post("/site/groups/:groupId/players/:playerId/delete", usersSite.authenticate, groupsSite.removePlayerFromGroup);
+  //app.post("/site/groups/:groupId/players/:playerId/delete", usersSite.authenticate, groupsSite.removePlayerFromGroup); // non-Rest
+  app.delete("/site/groups/:groupId/players/:playerId", usersSite.authenticate, groupsSite.removePlayerFromGroup)
 
   // Handling all errors
   app.use("/site", groupsSite.errorHandler);

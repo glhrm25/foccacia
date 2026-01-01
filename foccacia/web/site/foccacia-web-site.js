@@ -103,14 +103,14 @@ export default function init(groupsServices) {
     function internal_deleteGroup(req, res){
       const groupId = req.params.groupId
       return groupsServices.deleteGroup(req.userToken, groupId)
-          .then( removedGroup => res.redirect("/site/groups") )
+          .then( removedGroup => res.redirect(303, "/site/groups") )
     }
 
     function internal_updateGroup(req, res){
       const groupId = req.params.groupId
       const userToken = req.userToken
       return groupsServices.updateGroup(userToken, groupId, req.body)
-          .then( updateGroup => res.redirect("/site/groups") )
+          .then( updateGroup => res.redirect(303, "/site/groups") )
     }
 
     function internal_addPlayerToGroup(req, res){
@@ -127,7 +127,7 @@ export default function init(groupsServices) {
       const groupId = req.params.groupId
       const playerId = req.params.playerId
       return groupsServices.removePlayerFromGroup(req.userToken, groupId, playerId)
-          .then( group => res.redirect(`/site/groups/${groupId}`) )
+          .then( group => res.redirect(303, `/site/groups/${groupId}`) )
     }
 
     // Auxiliary module function
