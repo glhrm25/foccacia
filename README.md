@@ -14,7 +14,7 @@
     │   ├── docs/                 # Documentação do projeto.
     │   ├── services/             # Implementação da lógica de cada funcionalidade da aplicação.
     │   ├── test/                 # Testes do módulo services realizados com Mocha.
-    │   ├── web/api/              # Implementação das rotas HTTP que compõem a API REST da aplicação web.
+    │   ├── web/                  # Implementação das rotas HTTP que compõem a API REST da aplicação web e ficheiros handlebars.
     │   ├── foccacia-server.js    # Ficheiro que constitui o ponto de entrada à aplicação do servidor.
     │
     └── README.md                 # Documento geral do grupo
@@ -55,6 +55,43 @@
 
 - Adicionar uma interface web à aplicação FOCCACIA desenvolvida na parte 1, armazenar os dados numa base de dados em vez de na memória e incorporar novas tecnologias e técnicas.
 
+- # Requisitos funcionais
+    - Criar uma interface web, apresentada no navegador, para todas as funcionalidades da Web API.
+    - Todas as operações que na Web API usam PUT ou DELETE, exceto a criação de utilizadores, devem ser implementadas com o método POST através de formulários HTML.
+    - A interface é renderizada no servidor, utilizando HTML, CSS e Handlebars. Pode usar Bootstrap para o estilo base.
+    - O utilizador não deve, em nenhuma situação, ter de conhecer ou inserir IDs de grupos, equipas ou ligas. Apenas é permitido digitar o nome de uma equipa para pesquisas ou o nome de um grupo ao criar ou editar esse grupo.
+
+- # Requisitos não funcionais
+    - A interface HTML/CSS deve ser implementada num novo ficheiro focaccia-web-site.mjs, ao mesmo nível de focaccia-web-api.mjs.
+    - Criar um módulo que substitua focaccia-data-mem.mjs, armazenando os dados numa base ElasticSearch, sem exigir alterações nos restantes módulos, exceto na importação do módulo em focaccia-server.mjs (ou num módulo de configuração da aplicação).
+    - A interação com o ElasticSearch deve ser feita através da HTTP API usando fetch, sem recorrer a módulos específicos do Node.
+    - O módulo focaccia-data-mem.mjs não deve ser eliminado, permitindo alternar a implementação apenas através das importações no módulo de configuração.
+
+- Qualidade e testes
+    - Esta fase deve também ser aproveitada para melhorar a qualidade do código e aumentar a quantidade e qualidade de testes, tanto unitários como de integração.
+
 # Fase 3 —  Autenticação
 
-- Adicionar autenticação à aplicação web com interface de utilizador (website) e suportar as operações PUT e DELETE, que não foram implementadas na fase anterior.
+- # Objetivos
+    - Adicionar autenticação à aplicação web FOCCACIA.
+    - Suportar operações PUT e DELETE na interface web usando JavaScript no cliente.
+
+- # Requisitos funcionais
+    - Registo e autenticação de utilizadores com Passport.
+    - Funcionalidades de gestão de grupos acessíveis apenas a utilizadores autenticados.
+    - Grupos privados: só o proprietário pode manipular.
+    - Todas as funcionalidades da Web API da parte 1 disponíveis via site.
+    - DELETE e PUT da Web API podem ser usados no site com fetch() no browser.
+    - O utilizador não deve conhecer ou inserir IDs de grupos, equipas ou ligas.
+
+- # Requisitos não funcionais
+    - Entregar relatório no wiki do repositório do grupo, descrevendo a implementação final (não incluir estados intermédios).
+    - Relatório deve incluir:
+        - Estrutura da aplicação (servidor e cliente).
+        - Design do armazenamento em ElasticSearch: índices, propriedades, relações.
+        - Mapeamento entre documentos ElasticSearch e modelo de objetos da aplicação web.
+        - Documentação da API do servidor.
+        - Instruções completas para executar a aplicação e testes:
+            - Incluir introdução automática de dados de teste.
+            - Deve permitir execução em qualquer máquina (incluindo do docente).
+            - Tempo máximo de execução: 5 minutos.
