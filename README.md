@@ -1,4 +1,4 @@
-# FOCCACIA (PROJETO LOCAL)
+# FOCCACIA
 
 # Descrição Geral:
 
