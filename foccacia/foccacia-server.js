@@ -160,12 +160,8 @@ if(groupsAPI && usersAPI && groupsSite) {
   // update group by name
   app.put("/groups/:groupId", usersSite.authenticate, groupsAPI.updateGroup);
   app.get("/site/groups/:groupId/updateForm", usersSite.authenticate, groupsSite.renderUpdatePage)
-  /* -> THE ROUTE BELOW IS NOT ALLOWED IN THE MOST RECENT VERSION OF EXPRESS
-  * -> TO FIX THIS, WE CREATE TWO SEPARATE ROUTES, ONE WITH THE GROUPID AND ONE WITHOUT THE GROUPID
-  */
-  //app.put("/site/groups/:groupId?", usersSite.authenticate, groupsSite.updateGroup); // ? is not allowed
-  app.put("/site/groups/:groupId", usersSite.authenticate, groupsSite.updateGroup); // Two separate routes
-  app.put("/site/groups", usersSite.authenticate, groupsSite.updateGroup);
+  app.put("/site/groups{/:groupId}", usersSite.authenticate, groupsSite.updateGroup);
+  /*  Equivalent to "/site/groups/:groupId?" in the most recent express versions  */
 
   // add players to group
   app.post("/groups/:groupId/players", usersSite.authenticate, groupsAPI.addPlayerToGroup)
@@ -173,7 +169,6 @@ if(groupsAPI && usersAPI && groupsSite) {
 
   // delete player from group
   app.delete("/groups/:groupId/players/:playerId", usersSite.authenticate, groupsAPI.removePlayerFromGroup)
-  //app.post("/site/groups/:groupId/players/:playerId/delete", usersSite.authenticate, groupsSite.removePlayerFromGroup); // non-Rest
   app.delete("/site/groups/:groupId/players/:playerId", usersSite.authenticate, groupsSite.removePlayerFromGroup)
 
   // Handling all errors
