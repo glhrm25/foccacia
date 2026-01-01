@@ -67,7 +67,7 @@
     - A interação com o ElasticSearch deve ser feita através da HTTP API usando fetch, sem recorrer a módulos específicos do Node.
     - O módulo focaccia-data-mem.mjs não deve ser eliminado, permitindo alternar a implementação apenas através das importações no módulo de configuração.
 
-- Qualidade e testes
+- # Qualidade e testes
     - Esta fase deve também ser aproveitada para melhorar a qualidade do código e aumentar a quantidade e qualidade de testes, tanto unitários como de integração.
 
 # Fase 3 —  Autenticação
