@@ -3,7 +3,7 @@ import {errors} from "../commons/internal-errors.js";
 import assert from 'assert';
 // Import necessary modules for Mocha tests
 import usersServicesInit from '../services/users-services.js';
-import usersDataInit from '../data/mock-users-data-mem.js';
+import usersDataInit from '../data/mock/mock-users-data-mem.js';
 
 let usersServices;
 
@@ -27,7 +27,7 @@ describe("Testing Tasks Management API services with mock users data", () => {
         // With explicity promise (should always return a promise to Mocha)
         it("Adding username xyz", () => {
             // Act
-            const resp1Promise = usersServices.addUser("xyz");
+            const resp1Promise = usersServices.addUser("xyz", "password");
             return resp1Promise.then(resp1 => {
                 // Assert
                 assert.match(resp1.token, regExp);
@@ -41,7 +41,7 @@ describe("Testing Tasks Management API services with mock users data", () => {
         it("Adding username alice", async () => {
             // Arrange
             // Act
-            const resp1 = await usersServices.addUser("alice");
+            const resp1 = await usersServices.addUser("alice", "password");
             const resp2 = await usersServices.getUserId(resp1.token);
             assert.match(resp1.token, regExp);
             assert.deepEqual(resp2, 4); // Next user of the mock data is 4
@@ -67,12 +67,12 @@ describe("Testing Tasks Management API services with mock users data", () => {
             // Arrange
             const expectedError = errors.USER_ALREADY_EXISTS("abc");
             // Act
-            const resp1 = await usersServices.addUser("abc");
+            const resp1 = await usersServices.addUser("abc", "password");
             // Assert
             assert.match(resp1.token, regExp);
             try {
                 // An error is expected
-                await usersServices.addUser("abc");
+                await usersServices.addUser("abc", "password");
             }
             catch (error){
                 // Assert

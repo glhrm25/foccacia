@@ -3,9 +3,9 @@ import assert from 'assert';
 // Import necessary modules for Mocha tests
 import groupsServicesInit from '../services/foccacia-services.js';
 import usersServicesInit from '../services/users-services.js';
-import groupsDataInit from '../data/mock-foccacia-data-mem.js';
-import fapiTeamsData from '../data/fapi-teams-data.js';
-import usersDataInit from '../data/mock-users-data-mem.js';
+import groupsDataInit from '../data/mock/mock-foccacia-data-mem.js';
+import fapiTeamsData from '../data/mem/fapi-teams-data.js';
+import usersDataInit from '../data/mock/mock-users-data-mem.js';
 import e from "express";
 import { group } from "console";
 
@@ -101,7 +101,7 @@ describe("Testing groups Management API services with mock groups data", () => {
                 id: 1, 
                 name: `Group 1`, 
                 description: `Group 1 description`,
-                competition: {code: "MCP", name: "MOCK COMPETITION"},
+                competition: {code: "PL", name: "Premier League"},
                 year: 2025,
                 players: [],
                 userId: 2 
@@ -183,13 +183,13 @@ describe("Testing groups Management API services with mock groups data", () => {
         // Arrange
         const updatedIdGroup = 1;
         const newGroup = {
-            name: `An updated task`,
-            description: `This is the description fo the updated task.` 
+            name: `An updated group`,
+            description: `This is the description for the updated group.` 
         }
 
-        it(`Updating task ${updatedIdGroup} for user ${userId}`, async () => {
+        it(`Updating group ${updatedIdGroup} for user ${userId}`, async () => {
             // Arrange
-            const expectedGroup = Object.assign({id: updatedIdGroup}, newGroup, {competition: { code: 'MCP', name: 'MOCK COMPETITION' }, year: 2025, players: [], userId: userId});
+            const expectedGroup = Object.assign({id: updatedIdGroup}, newGroup, {competition: { code: 'PL', name: 'Premier League' }, year: 2025, players: [], userId: userId});
             // Act
             const updatedGroup = await groupsServices.updateGroup(userToken, updatedIdGroup, newGroup);
             // Assert
